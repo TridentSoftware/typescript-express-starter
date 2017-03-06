@@ -1,14 +1,25 @@
 import { Schema } from "mongoose";
 
-export var userSchema: Schema = new Schema({
-  createdAt: Date,
-  email: String,
-  firstName: String,
-  lastName: String
+export let userSchema: Schema = new Schema({
+  createdAt: {
+    type: Date,
+    required: true,
+    default: Date.now
+  },
+  email: {
+    type: String,
+    required: true
+  },
+  firstName: {
+    type: String,
+    required: true
+  },
+  lastName: {
+    type: String,
+    required: true
+  }
 });
 userSchema.pre("save", function(next) {
-  if (!this.createdAt) {
-    this.createdAt = new Date();
-  }
+  //do something
   next();
 });
