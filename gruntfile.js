@@ -40,7 +40,7 @@ module.exports = function(grunt) {
         tasks: ["ts"]
       },
       views: {
-        files: ["views/**/*.pug"],
+        files: ["views/**/*.hbs"],
         tasks: ["copy"]
       }
     }

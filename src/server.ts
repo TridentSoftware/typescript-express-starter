@@ -88,9 +88,9 @@ export class Server {
     //add static paths
     this.app.use(express.static(path.join(__dirname, "public")));
 
-    //configure pug
+    //configure hbs
     this.app.set("views", path.join(__dirname, "views"));
-    this.app.set("view engine", "pug");
+    this.app.set("view engine", "hbs");
 
     //mount logger
     this.app.use(logger("dev"));
