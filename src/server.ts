@@ -51,7 +51,7 @@ export class Server {
    */
   constructor() {
     //instance defaults
-    this.model = Object(); //initialize this to an empty object
+    this.model = <IModel>Object(); //initialize this to an empty object
 
     //create expressjs application
     this.app = express();
@@ -93,6 +93,7 @@ export class Server {
     this.app.set("view engine", "hbs");
 
     //mount logger
+    //noinspection TypeScriptValidateTypes
     this.app.use(logger("dev"));
 
     //mount json form parser
