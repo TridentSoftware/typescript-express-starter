@@ -1,4 +1,3 @@
-/*
 import mongoose = require("mongoose"); //import mongoose
 const Schema = mongoose.Schema;
 import {dbconfig} from "../config/database";
@@ -27,5 +26,4 @@ const ProfileSchema = new Schema({
 //if you want audit fields
 dbconfig.addAuditFields(ProfileSchema);
 
-export const Profile = mongoose.model('Profile', ProfileSchema);
-*/
+export const Profile = mongoose.model("Profile", ProfileSchema);

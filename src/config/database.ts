@@ -1,7 +1,7 @@
 import {Schema} from "mongoose";
 
 class dbconfigClass {
-  private auditFieldSchema= {
+  private auditFieldSchema = {
     createdOn: {type: Date, default: Date.now},
     updatedOn: {type: Date, default: Date.now},
     createdBy: {type: String},

@@ -1,43 +1,49 @@
+import {Request} from "express";
+import {IUser} from "../interfaces/user";
 const moment = require("moment");
 const attemptsBeforeLockout = 5;
 const loginSpanInMinutes = 15;
 const lockoutInMinutes = 5;
 
 export const authUtil = {
-    loginAttempt: (login) => {
-        login.lastLoginAttempt = Date.now();
-        login.loginAttempts++;
+  loginAttempt: (user: IUser) => {
+    user.lastLoginAttempt = new Date();
+    user.loginAttempts++;
 
-        //see if this is out of span of counting, if so re-set count
-        const mattempt = moment(login.lastLoginAttempt);
-        if (mattempt.add(loginSpanInMinutes, 'minutes') <= moment){
-            login.loginAttempts = 1;
-        }
-
-        login.save();
-    },
-    loginSuccess: (login) => {
-        login.lockedOut = false;
-        login.loginAttempts = 0;
-        login.lastLogin = Date.now();
-        login.save();
-    },
-    calculateLockout: (login) => {
-        if (login.lockedOut && login.lastLockout) {
-            const mlockout = moment(login.lastLockout);
-            //see if they've served their time
-            if (mlockout.add(lockoutInMinutes, 'minutes') <= moment()) {
-                login.lockedOut = false;
-                login.loginAttempts = 0;
-                login.save();
-                return;
-            }
-        }
-
-        if (attemptsBeforeLockout < login.loginAttempts){
-            login.lastLockout = Date.now();
-            login.lockedOut = true;
-            login.save();
-        }
+    //see if this is out of span of counting, if so re-set count
+    const mattempt = moment(user.lastLoginAttempt);
+    if (mattempt.add(loginSpanInMinutes, 'minutes') <= moment) {
+      user.loginAttempts = 1;
     }
+
+    user.save();
+  },
+  loginSuccess: (user: IUser) => {
+    user.lockedOut = false;
+    user.loginAttempts = 0;
+    user.lastLogin = new Date();
+    user.save();
+  },
+  calculateLockout: (user: IUser) => {
+    if (user.lockedOut && user.lastLockout) {
+      const mlockout = moment(user.lastLockout);
+      //see if they've served their time
+      if (mlockout.add(lockoutInMinutes, 'minutes') <= moment()) {
+        user.lockedOut = false;
+        user.loginAttempts = 0;
+        user.save();
+        return;
+      }
+    }
+
+    if (attemptsBeforeLockout < user.loginAttempts) {
+      user.lastLockout = new Date();
+      user.lockedOut = true;
+      user.save();
+    }
+  }
 };
+
+export interface AuthenticatedRequest extends Request {
+  user: IUser;
+}
