@@ -3,11 +3,11 @@ import * as cookieParser from "cookie-parser";
 import * as express from "express";
 import * as logger from "morgan";
 import * as path from "path";
+import * as cors from "cors";
+import * as helmet from "helmet";
 import errorHandler = require("errorhandler");
 import methodOverride = require("method-override");
-import cors = require("cors");
-import helmet = require("helmet");
-import passport = require('passport');
+import passport = require("passport");
 import mongoose = require("mongoose"); //import mongoose
 
 //config
@@ -82,12 +82,10 @@ export class Server {
    * @method config
    */
   public config() {
-    const MONGODB_CONNECTION: string = dbconfig.connection;
-
     //cors
-    //this.app.use(cors);
+    this.app.use(cors());
     //helmet
-    //this.app.use(helmet);
+    this.app.use(helmet());
 
     //add static paths
     this.app.use(express.static(path.join(__dirname, "public")));
@@ -125,7 +123,7 @@ export class Server {
     mongoose.Promise = global.Promise;
 
     //connect to mongoose
-    mongoose.connect(MONGODB_CONNECTION);
+    mongoose.connect(dbconfig.connection);
     mongoose.connection.on("connected", () => {
       console.log("Connected to database " + dbconfig.connection);
     });
