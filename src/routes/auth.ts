@@ -8,6 +8,7 @@ import {dbconfig} from "../config/database";
 import * as passport from "passport";
 import {IUser} from "../interfaces/user";
 import jwt = require("jsonwebtoken");
+import {throws} from "assert";
 
 export class AuthRoute extends BaseRoute {
 
@@ -24,10 +25,10 @@ export class AuthRoute extends BaseRoute {
     });
     //profile
     router.get("/auth/profile",
-      passport.authenticate('jwt', {session:false}),
+      passport.authenticate('jwt', {session: false}),
       (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-      new AuthRoute().profile(req, res, next);
-    });
+        new AuthRoute().profile(req, res, next);
+      });
   }
 
   constructor() {
@@ -47,8 +48,7 @@ export class AuthRoute extends BaseRoute {
     }
 
     const query = {username: credentials.username, deleted: false};
-    User.findOne(query, (err: any, user: IUser) => {
-      if (err) throw err;
+    User.findOne(query).then(user => {
       if (!user) {
         httpUtil.unauthorized(res, 'Invalid username or password.');
         return next();
@@ -99,12 +99,10 @@ export class AuthRoute extends BaseRoute {
 
   public register(req: Request, res: Response, next: NextFunction) {
     const newUser = new User(req.body);
-    newUser.save((err: any, user: IUser) => {
-      if (err) {
-        validateUtil.validationError(err, res);
-        return next();
-      }
+    newUser.save().then(user => {
       res.json({success: true, message: 'User registered.'});
+    }).catch(err => {
+      validateUtil.validationError(err, res);
     });
   }
 
