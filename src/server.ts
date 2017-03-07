@@ -126,11 +126,11 @@ export class Server {
 
     //connect to mongoose
     mongoose.connect(MONGODB_CONNECTION);
-    mongoose.connection.on('connected', ()=>{
-      console.log('Connected to database' + dbconfig.connection);
+    mongoose.connection.on("connected", () => {
+      console.log("Connected to database " + dbconfig.connection);
     });
-    mongoose.connection.on('error', (err)=>{
-      console.log('Database error ' + err);
+    mongoose.connection.on("error", (err) => {
+      console.log("Database error " + err);
     });
 
     // catch 404 and forward to error handler
