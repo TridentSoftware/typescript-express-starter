@@ -5,7 +5,6 @@ import * as _ from "lodash";
 export const validateUtil = {
   validationError: (err: any, res: Response) => {
     if (err) {
-      console.log(err);
       if (err.message.indexOf("duplicate key") !== -1){
         const re = /index:\s(.+)_1/ig;
         const field = re.exec(err.message);
