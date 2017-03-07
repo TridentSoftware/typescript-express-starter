@@ -14,8 +14,8 @@ const ProfileSchema = new Schema({
   }],
   addresses: [{
     friendlyName: {type: String, required: false},
-    address: {type: String, required: true},
-    address2: {type: String, required: true},
+    address: {type: String, required: false},
+    address2: {type: String, required: false},
     city: {type: String, required: false},
     state: {type: String, required: false},
     zip: {type: String, required: false}
