@@ -1,5 +1,5 @@
-import {IModel} from "./model";
-export interface IUser extends IModel{
+import {IPersistedModel} from "./persisted-model";
+export interface IUser extends IPersistedModel{
   realm?: string;
   firstName?: string;
   lastName?: string;

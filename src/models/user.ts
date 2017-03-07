@@ -6,13 +6,13 @@ import {IUser} from "../interfaces/user";
 
 const UserSchema = new Schema({
   realm: {type: String},
-  firstName: {type: String, required: true},
-  lastName: {type: String, required: true},
+  firstName: {type: String, required: [true, "First name is required."]},
+  lastName: {type: String, required: [true, "Last name is required."]},
   displayName: {type: String, required: false},
-  username: {type: String, unique: true, required: true},
-  email: {type: String, unique: true, required: true},
+  username: {type: String, unique: true, required: [true, "Username is required."]},
+  email: {type: String, unique: true, required: [true, "Email is required."]},
   emailValidated: {type: Boolean, default: false},
-  password: {type: String, required: true},
+  password: {type: String, required: [true, "Password is required."]},
   passwordQuestion: {type: String},
   passwordQuestionAnswer: {type: String},
   lastPasswordChange: {type: Date, default: Date.now},

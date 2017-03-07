@@ -3,7 +3,7 @@ import {BaseRoute} from "./route";
 import {httpUtil} from "../util/http";
 import {User} from "../models/user";
 import {authUtil, AuthenticatedRequest} from "../util/auth";
-import {dbUtil} from "../util/database";
+import {validateUtil} from "../util/validate";
 import {dbconfig} from "../config/database";
 import * as passport from "passport";
 import {IUser} from "../interfaces/user";
@@ -101,7 +101,7 @@ export class AuthRoute extends BaseRoute {
     const newUser = new User(req.body);
     newUser.save((err: any, user: IUser) => {
       if (err) {
-        dbUtil.validationError(err, res);
+        validateUtil.validationError(err, res);
         return next();
       }
       res.json({success: true, message: 'User registered.'});
