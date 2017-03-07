@@ -7,7 +7,6 @@ import {IUser} from "../interfaces/user";
 @suite("User object")
 class UserTest {
   private data: IUser;
-  private count: number = 0;
 
   public static before() {
     //use q promises
@@ -25,12 +24,11 @@ class UserTest {
 
   public before() {
     //new user data
-    this.count++;
     this.data = {
       firstName: "Bruce",
       lastName: "Wayne",
-      username: "batman" + this.count,
-      email: "bruce" + this.count + "@wayneenterprises.com",
+      username: "batman",
+      email: "bruce@wayneenterprises.com",
       password: "password1"
     } as IUser;
 
@@ -64,6 +62,7 @@ class UserTest {
     newUser.save().catch(err => {
       err.should.exist;
       err.name.should.equal("ValidationError");
+      //console.log(err);
     }).then(() => done());
   }
 
