@@ -7,18 +7,21 @@ import errorHandler = require("errorhandler");
 import methodOverride = require("method-override");
 import mongoose = require("mongoose"); //import mongoose
 
+//config
+import {dbconfig} from "./config/database";
+
 //routes
-import { IndexRoute } from "./routes/index";
+import {IndexRoute} from "./routes/index";
 
 //interfaces
-import { IUser } from "./interfaces/user"; //import IUser
+import {IUser} from "./interfaces/user"; //import IUser
 
 //models
-import { IModel } from "./models/model"; //import IModel
-import { IUserModel } from "./models/user"; //import IUserModel
+import {IModel} from "./models/model"; //import IModel
+import {IUserModel} from "./models/user"; //import IUserModel
 
 //schemas
-import { userSchema } from "./schemas/user"; //import userSchema
+import {userSchema} from "./schemas/user"; //import userSchema
 
 /**
  * The server.
@@ -83,7 +86,7 @@ export class Server {
    * @method config
    */
   public config() {
-    const MONGODB_CONNECTION: string = "mongodb://localhost:27017/heros";
+    const MONGODB_CONNECTION: string = dbconfig.connection;
 
     //add static paths
     this.app.use(express.static(path.join(__dirname, "public")));
@@ -105,7 +108,7 @@ export class Server {
     }));
 
     //mount cookie parker
-    this.app.use(cookieParser("SECRET_GOES_HERE"));
+    this.app.use(cookieParser(dbconfig.secret));
 
     //mount override
     this.app.use(methodOverride());
@@ -121,9 +124,9 @@ export class Server {
     this.model.user = connection.model<IUserModel>("User", userSchema);
 
     // catch 404 and forward to error handler
-    this.app.use(function(err: any, req: express.Request, res: express.Response, next: express.NextFunction) {
-        err.status = 404;
-        next(err);
+    this.app.use(function (err: any, req: express.Request, res: express.Response, next: express.NextFunction) {
+      err.status = 404;
+      next(err);
     });
 
     //error handling
