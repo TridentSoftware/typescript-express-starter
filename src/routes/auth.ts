@@ -74,7 +74,7 @@ export class AuthRoute extends BaseRoute {
           authUtil.loginSuccess(user);
 
           const token = jwt.sign(user, dbconfig.secret, {
-            expiresIn: 604800
+            expiresIn: 604800 //a week (in seconds)
           });
 
           const resUser = {
