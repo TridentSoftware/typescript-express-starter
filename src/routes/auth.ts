@@ -23,7 +23,7 @@ export class AuthRoute extends BaseRoute {
       new AuthRoute().register(req, res, next);
     });
     //profile
-    router.get("/user/profile",
+    router.get("/auth/profile",
       passport.authenticate('jwt', {session:false}),
       (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
       new AuthRoute().profile(req, res, next);
