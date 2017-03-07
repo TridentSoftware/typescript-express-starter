@@ -5,9 +5,9 @@ import * as logger from "morgan";
 import * as path from "path";
 import * as cors from "cors";
 import * as helmet from "helmet";
+import * as passport from "passport";
 import errorHandler = require("errorhandler");
 import methodOverride = require("method-override");
-import passport = require("passport");
 import mongoose = require("mongoose"); //import mongoose
 
 //config

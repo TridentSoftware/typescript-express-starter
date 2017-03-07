@@ -5,9 +5,9 @@ import {User} from "../models/user";
 import {authUtil, AuthenticatedRequest} from "../util/auth";
 import {dbUtil} from "../util/database";
 import {dbconfig} from "../config/database";
-import jwt = require("jsonwebtoken");
-import {IUser} from "../interfaces/user";
 import * as passport from "passport";
+import {IUser} from "../interfaces/user";
+import jwt = require("jsonwebtoken");
 
 export class AuthRoute extends BaseRoute {
 
