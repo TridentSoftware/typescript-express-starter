@@ -5,23 +5,18 @@ import * as logger from "morgan";
 import * as path from "path";
 import errorHandler = require("errorhandler");
 import methodOverride = require("method-override");
+import cors = require("cors");
+import helmet = require("helmet");
+import passport = require('passport');
 import mongoose = require("mongoose"); //import mongoose
 
 //config
 import {dbconfig} from "./config/database";
+import {configureJwt} from "./config/passport";
 
 //routes
 import {IndexRoute} from "./routes/index";
-
-//interfaces
-import {IUser} from "./interfaces/user"; //import IUser
-
-//models
-import {IModel} from "./models/model"; //import IModel
-import {IUserModel} from "./models/user"; //import IUserModel
-
-//schemas
-import {userSchema} from "./schemas/user"; //import userSchema
+import {AuthRoute} from "./routes/auth";
 
 /**
  * The server.
@@ -31,8 +26,6 @@ import {userSchema} from "./schemas/user"; //import userSchema
 export class Server {
 
   public app: express.Application;
-
-  private model: IModel; //an instance of IModel
 
   /**
    * Bootstrap the application.
@@ -53,9 +46,6 @@ export class Server {
    * @constructor
    */
   constructor() {
-    //instance defaults
-    this.model = <IModel>Object(); //initialize this to an empty object
-
     //create expressjs application
     this.app = express();
 
@@ -76,7 +66,13 @@ export class Server {
    * @method api
    */
   public api() {
-    //empty for now
+    let router: express.Router;
+    router = express.Router();
+
+    AuthRoute.create(router);
+
+    //use router middleware
+    this.app.use("/api", router);
   }
 
   /**
@@ -87,6 +83,11 @@ export class Server {
    */
   public config() {
     const MONGODB_CONNECTION: string = dbconfig.connection;
+
+    //cors
+    //this.app.use(cors);
+    //helmet
+    //this.app.use(helmet);
 
     //add static paths
     this.app.use(express.static(path.join(__dirname, "public")));
@@ -110,18 +111,27 @@ export class Server {
     //mount cookie parker
     this.app.use(cookieParser(dbconfig.secret));
 
+    //passport middleware
+    this.app.use(passport.initialize());
+    this.app.use(passport.session());
+    //jwt
+    configureJwt(passport);
+
     //mount override
-    this.app.use(methodOverride());
+    //this.app.use(methodOverride());
 
     //use q promises
     global.Promise = require("q").Promise;
     mongoose.Promise = global.Promise;
 
     //connect to mongoose
-    let connection: mongoose.Connection = mongoose.createConnection(MONGODB_CONNECTION);
-
-    //create models
-    this.model.user = connection.model<IUserModel>("User", userSchema);
+    mongoose.connect(MONGODB_CONNECTION);
+    mongoose.connection.on('connected', ()=>{
+      console.log('Connected to database' + dbconfig.connection);
+    });
+    mongoose.connection.on('error', (err)=>{
+      console.log('Database error ' + err);
+    });
 
     // catch 404 and forward to error handler
     this.app.use(function (err: any, req: express.Request, res: express.Response, next: express.NextFunction) {

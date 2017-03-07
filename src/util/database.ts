@@ -2,9 +2,10 @@ import {Response} from "express";
 import {httpUtil} from "./http";
 import _ from "lodash";
 
-export const databaseUtil = {
+export const dbUtil = {
     validationError: (err: any, res: Response) => {
         if (err) {
+          console.log(err);
             let out = [];
             _.each(err.errors, (value)=>{
                 out.push({

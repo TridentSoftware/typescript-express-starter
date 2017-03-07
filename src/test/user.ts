@@ -1,3 +1,4 @@
+/*
 import { suite, test } from "mocha-typescript";
 import { IUser } from "../interfaces/user";
 import { IUserModel } from "../models/user";
@@ -55,4 +56,4 @@ class UserTest {
       result.lastName.should.equal(this.data.lastName);
     });
   }
-}
+}*/

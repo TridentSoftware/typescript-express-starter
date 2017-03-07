@@ -1,9 +1,8 @@
-/*
 import {Strategy as JwtStrategy, ExtractJwt} from "passport-jwt";
 import {dbconfig} from "./database";
-import {userSchema} from "../schemas/user";
+import {User} from "../models/user";
 
-module.exports = function(passport) {
+export const configureJwt = (passport) => {
     let opts = {
         jwtFromRequest: ExtractJwt.fromAuthHeader(),
         secretOrKey: dbconfig.secret
@@ -11,7 +10,7 @@ module.exports = function(passport) {
 
     passport.use(new JwtStrategy(opts, (jwt_payload, done) => {
         //console.log(jwt_payload);
-        userSchema.findById(jwt_payload._doc._id, (err, user) => {
+        User.findById(jwt_payload._doc._id, (err, user) => {
             if (err) return done(err, false);
             if (user)
                 return done(null, user);
@@ -19,4 +18,4 @@ module.exports = function(passport) {
                 return done(null, false);
         });
     }));
-};*/
+};

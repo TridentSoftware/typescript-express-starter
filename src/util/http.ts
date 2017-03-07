@@ -1,12 +1,12 @@
 import {Response} from "express";
 
 export const httpUtil = {
-  unauthorized: (res: Response, message: string, errors: any) => {
+  unauthorized: (res: Response, message: string, errors: any = null) => {
     res.status(401);
     res.send({error: 'Unauthorized', message: message, errors: errors});
     res.end();
   },
-  badRequest: (res: Response, type: string, message: string, errors: any) => {
+  badRequest: (res: Response, type: string, message: string, errors: any = null) => {
     res.status(400);
     res.send({error: type, message: message, errors: errors});
     res.end();

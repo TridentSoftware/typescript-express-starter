@@ -8,7 +8,7 @@ class dbconfigClass {
     updatedBy: {type: String}
   };
 
-  public connection: string = "mongodb://localhost:27017/heros";
+  public connection: string = "mongodb://localhost:27017/expressts";
   public secret: string = "My super safe secret 12334$#@%";
 
   constructor(){
