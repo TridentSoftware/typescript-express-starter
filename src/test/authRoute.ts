@@ -146,6 +146,7 @@ class AuthRouteTest {
       setTimeout(() => {
         //noinspection TypeScriptUnresolvedFunction
         const data = JSON.parse(this.res._getData());
+        data.token.should.exist;
         data.success.should.equal(true);
         this.res.statusCode.should.equal(200);
         done();
@@ -235,6 +236,30 @@ class AuthRouteTest {
         const data = JSON.parse(this.res._getData());
         data.error.should.equal("Unauthorized");
         this.res.statusCode.should.equal(401);
+        done();
+      }, this.to);
+    });
+  }
+
+  @test("Should get profile when logged in.")
+  public getProfile(done: Function) {
+    const eu = new User(this.existingUser);
+    eu.save().then(user => {
+      const creds = {username: this.existingUser.username, password: this.existingUser.password} as Credentials;
+      //noinspection TypeScriptUnresolvedFunction
+      const req = httpMocks.createRequest({
+        method: "GET",
+        url: "/auth/profile",
+        user: user
+      });
+      this.route.profile(req, this.res, this.next);
+      setTimeout(() => {
+        //noinspection TypeScriptUnresolvedFunction
+        const data = JSON.parse(this.res._getData());
+        data.user.should.exist;
+        data.user.username.should.equal(this.existingUser.username);
+        data.user.should.have.property("password").equal(null);
+        this.res.statusCode.should.equal(200);
         done();
       }, this.to);
     });
