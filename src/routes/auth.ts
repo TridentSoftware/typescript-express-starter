@@ -46,7 +46,11 @@ export class AuthRoute extends BaseRoute {
       return next();
     }
 
-    const query = {username: creds.username, deleted: false};
+    const query = {
+      //realm: creds.realm,
+      username: creds.username,
+      deleted: false
+    };
     User.findOne(query).then(user => {
       if (!user) {
         //httpUtil.notFound(res, "User not found.");
@@ -99,6 +103,7 @@ export class AuthRoute extends BaseRoute {
 
   public register(req: Request, res: Response, next: NextFunction) {
     const newUser = new User(req.body);
+
     newUser.save().then(user => {
       res.json({success: true, message: "User registered."});
     }).catch(err => {

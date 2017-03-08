@@ -5,7 +5,7 @@ import {dbconfig} from "../config/database";
 import {IUser} from "../interfaces/user";
 
 const UserSchema = new Schema({
-  realm: {type: String},
+  //realm: {type: String},
   firstName: {type: String, required: [true, "First name is required."]},
   lastName: {type: String, required: [true, "Last name is required."]},
   displayName: {type: String, required: false},
