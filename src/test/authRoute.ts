@@ -106,7 +106,7 @@ class AuthRouteTest {
   public registerFailDuplicate(done: Function) {
     const eu = new User(this.existingUser);
     eu.save().then(() => {
-      this.registerData.username = "batman1";
+      this.registerData.username = this.existingUser.username;
       //noinspection TypeScriptUnresolvedFunction
       let req = httpMocks.createRequest({
         method: "POST",
