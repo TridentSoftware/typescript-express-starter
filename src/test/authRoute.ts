@@ -39,7 +39,9 @@ class AuthRouteTest {
   public before(done: Function) {
     this.route = new AuthRoute();
     //noinspection TypeScriptUnresolvedFunction
-    this.res = httpMocks.createResponse();
+    this.res = httpMocks.createResponse({
+      eventEmitter: require('events').EventEmitter
+    });
 
     //new user data
     this.registerData = {
@@ -69,7 +71,7 @@ class AuthRouteTest {
   @test("Should register successfully")
   public register(done: Function) {
     //noinspection TypeScriptUnresolvedFunction
-    let req = httpMocks.createRequest({
+    const req = httpMocks.createRequest({
       method: "POST",
       url: "/auth/register",
       body: this.registerData
@@ -89,7 +91,7 @@ class AuthRouteTest {
     this.registerData.firstName = null;
     this.registerData.lastName = null;
     //noinspection TypeScriptUnresolvedFunction
-    let req = httpMocks.createRequest({
+    const req = httpMocks.createRequest({
       method: "POST",
       url: "/auth/register",
       body: this.registerData
@@ -113,7 +115,7 @@ class AuthRouteTest {
     eu.save().then(() => {
       this.registerData.username = this.existingUser.username;
       //noinspection TypeScriptUnresolvedFunction
-      let req = httpMocks.createRequest({
+      const req = httpMocks.createRequest({
         method: "POST",
         url: "/auth/register",
         body: this.registerData
@@ -135,7 +137,7 @@ class AuthRouteTest {
     eu.save().then(() => {
       const creds = {username: this.existingUser.username, password: this.existingUser.password} as Credentials;
       //noinspection TypeScriptUnresolvedFunction
-      let req = httpMocks.createRequest({
+      const req = httpMocks.createRequest({
         method: "POST",
         url: "/auth",
         body: creds
@@ -155,7 +157,7 @@ class AuthRouteTest {
   public loginValidation(done: Function) {
     const creds = {username: "", password: this.existingUser.password} as Credentials;
     //noinspection TypeScriptUnresolvedFunction
-    let req = httpMocks.createRequest({
+    const req = httpMocks.createRequest({
       method: "POST",
       url: "/auth",
       body: creds
@@ -177,7 +179,7 @@ class AuthRouteTest {
     eu.save().then(() => {
       const creds = {username: this.existingUser.username, password: "wrong"} as Credentials;
       //noinspection TypeScriptUnresolvedFunction
-      let req = httpMocks.createRequest({
+      const req = httpMocks.createRequest({
         method: "POST",
         url: "/auth",
         body: creds
@@ -199,7 +201,7 @@ class AuthRouteTest {
     eu.save().then(() => {
       const creds = {username: "wrong", password: this.existingUser.password} as Credentials;
       //noinspection TypeScriptUnresolvedFunction
-      let req = httpMocks.createRequest({
+      const req = httpMocks.createRequest({
         method: "POST",
         url: "/auth",
         body: creds
@@ -222,7 +224,7 @@ class AuthRouteTest {
     eu.save().then(() => {
       const creds = {username: this.existingUser.username, password: this.existingUser.password} as Credentials;
       //noinspection TypeScriptUnresolvedFunction
-      let req = httpMocks.createRequest({
+      const req = httpMocks.createRequest({
         method: "POST",
         url: "/auth",
         body: creds
