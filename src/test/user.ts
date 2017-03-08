@@ -31,9 +31,6 @@ class UserTest {
       email: "bruce@wayneenterprises.com",
       password: "password1"
     } as IUser;
-
-    //clean collection
-    User.remove({});
   }
 
   constructor() {
@@ -51,7 +48,11 @@ class UserTest {
       user.username.should.equal(this.data.username);
       user.email.should.equal(this.data.email);
       user.password.should.not.equal(this.data.password);
-    }).then(() => done());
+    }).then(() =>{
+      User.remove({}).then(()=>{
+        done();
+      })
+    });
   }
 
   @test("should validate a new User")
@@ -62,7 +63,6 @@ class UserTest {
     newUser.save().catch(err => {
       err.should.exist;
       err.name.should.equal("ValidationError");
-      //console.log(err);
     }).then(() => done());
   }
 
@@ -79,7 +79,11 @@ class UserTest {
         savedUser.username.should.equal(this.data.username);
         savedUser.email.should.equal(this.data.email);
         savedUser.password.should.not.equal(this.data.password);
-      }).then(() => done());
+      }).then(() =>{
+        User.remove({}).then(()=>{
+          done();
+        })
+      });
     });
   }
 }
