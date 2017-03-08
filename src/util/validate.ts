@@ -25,5 +25,4 @@ export const validateUtil = {
       httpUtil.badRequest(res, err.name, err.message, out);
     }
   }
-}
 };
