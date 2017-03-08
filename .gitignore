@@ -1,4 +1,5 @@
 .tscache
+.idea
 .baseDir.ts
 dist
 node_modules
