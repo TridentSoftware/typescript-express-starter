@@ -87,6 +87,7 @@ class AuthRouteTest {
   @test("Should fail registration validation")
   public registerFailValid(done: Function) {
     this.registerData.firstName = null;
+    this.registerData.lastName = null;
     //noinspection TypeScriptUnresolvedFunction
     let req = httpMocks.createRequest({
       method: "POST",
@@ -98,6 +99,9 @@ class AuthRouteTest {
       //noinspection TypeScriptUnresolvedFunction
       const data = JSON.parse(this.res._getData());
       data.error.should.equal("ValidationError");
+      data.errors.should.be.lengthOf(2);
+      data.errors.should.have.deep.property("[0].field", "lastName");
+      data.errors.should.have.deep.property("[1].field", "firstName");
       this.res.statusCode.should.equal(400);
       done();
     }, this.to);
