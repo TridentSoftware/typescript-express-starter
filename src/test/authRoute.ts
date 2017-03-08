@@ -97,6 +97,8 @@ class AuthRouteTest {
     };
     this.route.register(req, res, next);
     setTimeout(() => {
+      const data = JSON.parse(res._getData());
+      data.error.should.equal("ValidationError");
       res.statusCode.should.equal(400);
       done();
     }, this.to);
@@ -119,6 +121,8 @@ class AuthRouteTest {
       };
       this.route.register(req, res, next);
       setTimeout(() => {
+        const data = JSON.parse(res._getData());
+        data.error.should.equal("Conflict");
         res.statusCode.should.equal(409);
         done();
       }, this.to);
@@ -133,7 +137,7 @@ class AuthRouteTest {
       //noinspection TypeScriptUnresolvedFunction
       let req = httpMocks.createRequest({
         method: "POST",
-        url: "/auth/register",
+        url: "/auth",
         body: credentials
       });
       //noinspection TypeScriptUnresolvedFunction
@@ -159,7 +163,7 @@ class AuthRouteTest {
       //noinspection TypeScriptUnresolvedFunction
       let req = httpMocks.createRequest({
         method: "POST",
-        url: "/auth/register",
+        url: "/auth",
         body: credentials
       });
       //noinspection TypeScriptUnresolvedFunction
@@ -168,6 +172,8 @@ class AuthRouteTest {
       };
       this.route.auth(req, res, next);
       setTimeout(() => {
+        const data = JSON.parse(res._getData());
+        data.error.should.equal("ValidationError");
         res.statusCode.should.equal(400);
         done();
       }, this.to);
@@ -182,7 +188,7 @@ class AuthRouteTest {
       //noinspection TypeScriptUnresolvedFunction
       let req = httpMocks.createRequest({
         method: "POST",
-        url: "/auth/register",
+        url: "/auth",
         body: credentials
       });
       //noinspection TypeScriptUnresolvedFunction
@@ -191,6 +197,8 @@ class AuthRouteTest {
       };
       this.route.auth(req, res, next);
       setTimeout(() => {
+        const data = JSON.parse(res._getData());
+        data.error.should.equal("Unauthorized");
         res.statusCode.should.equal(401);
         done();
       }, this.to);
@@ -205,7 +213,7 @@ class AuthRouteTest {
       //noinspection TypeScriptUnresolvedFunction
       let req = httpMocks.createRequest({
         method: "POST",
-        url: "/auth/register",
+        url: "/auth",
         body: credentials
       });
       //noinspection TypeScriptUnresolvedFunction
@@ -214,6 +222,8 @@ class AuthRouteTest {
       };
       this.route.auth(req, res, next);
       setTimeout(() => {
+        const data = JSON.parse(res._getData());
+        data.error.should.equal("Unauthorized");
         res.statusCode.should.equal(401);
         done();
       }, this.to);
@@ -229,7 +239,7 @@ class AuthRouteTest {
       //noinspection TypeScriptUnresolvedFunction
       let req = httpMocks.createRequest({
         method: "POST",
-        url: "/auth/register",
+        url: "/auth",
         body: credentials
       });
       //noinspection TypeScriptUnresolvedFunction
@@ -238,6 +248,8 @@ class AuthRouteTest {
       };
       this.route.auth(req, res, next);
       setTimeout(() => {
+        const data = JSON.parse(res._getData());
+        data.error.should.equal("Unauthorized");
         res.statusCode.should.equal(401);
         done();
       }, this.to);
