@@ -110,6 +110,6 @@ export class AuthRoute extends BaseRoute {
     const user: IUser = req.user;
     user.password = null;
     //also send profile
-    res.json({user: user, profile: null});
+    res.json({user: user});
   }
 }
