@@ -3,8 +3,8 @@ import {User} from "../models/user";
 import {dbconfig} from "../config/database";
 import mongoose = require("mongoose");
 import {IUser} from "../interfaces/user";
-import {AuthRoute} from "../routes/auth";
-import * as httpMocks from "node-mocks-http";
+import {AuthRoute, Credentials} from "../routes/auth";
+import httpMocks = require("node-mocks-http");
 
 @suite("Auth route tests")
 class AuthRouteTest {
@@ -12,6 +12,9 @@ class AuthRouteTest {
   private registerData: IUser;
   private existingUser: IUser;
   private route: AuthRoute;
+  private res: any;
+  private next: any = () => {
+  };
 
   public static before(done: Function) {
     //require chai and use should() assertions
@@ -24,7 +27,7 @@ class AuthRouteTest {
     mongoose.Promise = global.Promise;
 
     //connect to mongoose and create model
-    mongoose.connect(dbconfig.connection + "_test").then(() => done());
+    mongoose.connect(dbconfig.connection + "_test").then(done());
   }
 
   public static after(done: Function) {
@@ -35,6 +38,8 @@ class AuthRouteTest {
 
   public before(done: Function) {
     this.route = new AuthRoute();
+    //noinspection TypeScriptUnresolvedFunction
+    this.res = httpMocks.createResponse();
 
     //new user data
     this.registerData = {
@@ -69,15 +74,12 @@ class AuthRouteTest {
       url: "/auth/register",
       body: this.registerData
     });
-    //noinspection TypeScriptUnresolvedFunction
-    let res = httpMocks.createResponse();
-    let next = () => {
-    };
-    this.route.register(req, res, next);
+    this.route.register(req, this.res, this.next);
     setTimeout(() => {
-      const data = JSON.parse(res._getData());
+      //noinspection TypeScriptUnresolvedFunction
+      const data = JSON.parse(this.res._getData());
       data.success.should.equal(true);
-      res.statusCode.should.equal(200);
+      this.res.statusCode.should.equal(200);
       done();
     }, this.to);
   }
@@ -91,15 +93,12 @@ class AuthRouteTest {
       url: "/auth/register",
       body: this.registerData
     });
-    //noinspection TypeScriptUnresolvedFunction
-    let res = httpMocks.createResponse();
-    let next = () => {
-    };
-    this.route.register(req, res, next);
+    this.route.register(req, this.res, this.next);
     setTimeout(() => {
-      const data = JSON.parse(res._getData());
+      //noinspection TypeScriptUnresolvedFunction
+      const data = JSON.parse(this.res._getData());
       data.error.should.equal("ValidationError");
-      res.statusCode.should.equal(400);
+      this.res.statusCode.should.equal(400);
       done();
     }, this.to);
   }
@@ -115,15 +114,12 @@ class AuthRouteTest {
         url: "/auth/register",
         body: this.registerData
       });
-      //noinspection TypeScriptUnresolvedFunction
-      let res = httpMocks.createResponse();
-      let next = () => {
-      };
-      this.route.register(req, res, next);
+      this.route.register(req, this.res, this.next);
       setTimeout(() => {
-        const data = JSON.parse(res._getData());
+        //noinspection TypeScriptUnresolvedFunction
+        const data = JSON.parse(this.res._getData());
         data.error.should.equal("Conflict");
-        res.statusCode.should.equal(409);
+        this.res.statusCode.should.equal(409);
         done();
       }, this.to);
     });
@@ -131,25 +127,21 @@ class AuthRouteTest {
 
   @test("Should login successfully")
   public login(done: Function) {
-    const credentials = {username: this.existingUser.username, password: this.existingUser.password};
     const eu = new User(this.existingUser);
     eu.save().then(() => {
+      const creds = {username: this.existingUser.username, password: this.existingUser.password} as Credentials;
       //noinspection TypeScriptUnresolvedFunction
       let req = httpMocks.createRequest({
         method: "POST",
         url: "/auth",
-        body: credentials
+        body: creds
       });
-      //noinspection TypeScriptUnresolvedFunction
-      let res = httpMocks.createResponse();
-      let next = () => {
-      };
-      this.route.auth(req, res, next);
+      this.route.auth(req, this.res, this.next);
       setTimeout(() => {
         //noinspection TypeScriptUnresolvedFunction
-        const data = JSON.parse(res._getData());
+        const data = JSON.parse(this.res._getData());
         data.success.should.equal(true);
-        res.statusCode.should.equal(200);
+        this.res.statusCode.should.equal(200);
         done();
       }, this.to);
     });
@@ -157,49 +149,41 @@ class AuthRouteTest {
 
   @test("Should fail login validation")
   public loginValidation(done: Function) {
-    const credentials = {username: "", password: this.existingUser.password};
-    const eu = new User(this.existingUser);
-    eu.save().then(() => {
-      //noinspection TypeScriptUnresolvedFunction
-      let req = httpMocks.createRequest({
-        method: "POST",
-        url: "/auth",
-        body: credentials
-      });
-      //noinspection TypeScriptUnresolvedFunction
-      let res = httpMocks.createResponse();
-      let next = () => {
-      };
-      this.route.auth(req, res, next);
-      setTimeout(() => {
-        const data = JSON.parse(res._getData());
-        data.error.should.equal("ValidationError");
-        res.statusCode.should.equal(400);
-        done();
-      }, this.to);
+    const creds = {username: "", password: this.existingUser.password} as Credentials;
+    //noinspection TypeScriptUnresolvedFunction
+    let req = httpMocks.createRequest({
+      method: "POST",
+      url: "/auth",
+      body: creds
     });
+    this.route.auth(req, this.res, this.next);
+    setTimeout(() => {
+      //noinspection TypeScriptUnresolvedFunction
+      const data = JSON.parse(this.res._getData());
+      data.error.should.equal("ValidationError");
+      data.message.should.equal("Username is required.");
+      this.res.statusCode.should.equal(400);
+      done();
+    }, this.to);
   }
 
   @test("Should fail login authorization (password)")
   public loginAuthorizationPassword(done: Function) {
-    const credentials = {username: this.existingUser.username, password: "wrong"};
     const eu = new User(this.existingUser);
     eu.save().then(() => {
+      const creds = {username: this.existingUser.username, password: "wrong"} as Credentials;
       //noinspection TypeScriptUnresolvedFunction
       let req = httpMocks.createRequest({
         method: "POST",
         url: "/auth",
-        body: credentials
+        body: creds
       });
-      //noinspection TypeScriptUnresolvedFunction
-      let res = httpMocks.createResponse();
-      let next = () => {
-      };
-      this.route.auth(req, res, next);
+      this.route.auth(req, this.res, this.next);
       setTimeout(() => {
-        const data = JSON.parse(res._getData());
+        //noinspection TypeScriptUnresolvedFunction
+        const data = JSON.parse(this.res._getData());
         data.error.should.equal("Unauthorized");
-        res.statusCode.should.equal(401);
+        this.res.statusCode.should.equal(401);
         done();
       }, this.to);
     });
@@ -207,24 +191,21 @@ class AuthRouteTest {
 
   @test("Should fail login authorization (username)")
   public loginAuthorizationUsername(done: Function) {
-    const credentials = {username: "wrong", password: this.existingUser.password};
     const eu = new User(this.existingUser);
     eu.save().then(() => {
+      const creds = {username: "wrong", password: this.existingUser.password} as Credentials;
       //noinspection TypeScriptUnresolvedFunction
       let req = httpMocks.createRequest({
         method: "POST",
         url: "/auth",
-        body: credentials
+        body: creds
       });
-      //noinspection TypeScriptUnresolvedFunction
-      let res = httpMocks.createResponse();
-      let next = () => {
-      };
-      this.route.auth(req, res, next);
+      this.route.auth(req, this.res, this.next);
       setTimeout(() => {
-        const data = JSON.parse(res._getData());
+        //noinspection TypeScriptUnresolvedFunction
+        const data = JSON.parse(this.res._getData());
         data.error.should.equal("Unauthorized");
-        res.statusCode.should.equal(401);
+        this.res.statusCode.should.equal(401);
         done();
       }, this.to);
     });
@@ -232,25 +213,22 @@ class AuthRouteTest {
 
   @test("Should fail login authorization (disabled)")
   public loginAuthorizationDisabled(done: Function) {
-    const credentials = {username: this.existingUser.username, password: this.existingUser.password};
     this.existingUser.disabled = true;
     const eu = new User(this.existingUser);
     eu.save().then(() => {
+      const creds = {username: this.existingUser.username, password: this.existingUser.password} as Credentials;
       //noinspection TypeScriptUnresolvedFunction
       let req = httpMocks.createRequest({
         method: "POST",
         url: "/auth",
-        body: credentials
+        body: creds
       });
-      //noinspection TypeScriptUnresolvedFunction
-      let res = httpMocks.createResponse();
-      let next = () => {
-      };
-      this.route.auth(req, res, next);
+      this.route.auth(req, this.res, this.next);
       setTimeout(() => {
-        const data = JSON.parse(res._getData());
+        //noinspection TypeScriptUnresolvedFunction
+        const data = JSON.parse(this.res._getData());
         data.error.should.equal("Unauthorized");
-        res.statusCode.should.equal(401);
+        this.res.statusCode.should.equal(401);
         done();
       }, this.to);
     });

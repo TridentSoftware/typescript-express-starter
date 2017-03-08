@@ -9,6 +9,11 @@ import * as passport from "passport";
 import {IUser} from "../interfaces/user";
 import jwt = require("jsonwebtoken");
 
+export interface Credentials {
+  username?: string;
+  password?: string;
+}
+
 export class AuthRoute extends BaseRoute {
 
   public static create(router: Router) {
@@ -35,20 +40,21 @@ export class AuthRoute extends BaseRoute {
   }
 
   public auth(req: Request, res: Response, next: NextFunction) {
-    const credentials = req.body;
+    const creds = req.body as Credentials;
 
-    if (!credentials || !credentials.username || credentials.username === "") {
+    if (!creds || !creds.hasOwnProperty("username") || creds.username === "") {
       httpUtil.badRequest(res, "ValidationError", "Username is required.");
       return next();
     }
-    if (!credentials.password || credentials.password === "") {
+    if (!creds.hasOwnProperty("password") || creds.password === "") {
       httpUtil.badRequest(res, "ValidationError", "Password is required.");
       return next();
     }
 
-    const query = {username: credentials.username, deleted: false};
+    const query = {username: creds.username, deleted: false};
     User.findOne(query).then(user => {
       if (!user) {
+        //httpUtil.notFound(res, "User not found.");
         httpUtil.unauthorized(res, "Invalid username or password.");
         return next();
       }
@@ -67,7 +73,7 @@ export class AuthRoute extends BaseRoute {
 
       authUtil.loginAttempt(user);
 
-      user.comparePassword(credentials.password, (err, isMatch) => {
+      user.comparePassword(creds.password, (err, isMatch) => {
         if (err) throw err;
         if (isMatch) {
           authUtil.loginSuccess(user);

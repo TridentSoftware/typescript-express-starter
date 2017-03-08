@@ -56,7 +56,7 @@ class UserTest {
       user.username.should.equal(this.data.username);
       user.email.should.equal(this.data.email);
       user.password.should.not.equal(this.data.password);
-      done()
+      done();
     });
   }
 
@@ -68,7 +68,7 @@ class UserTest {
     newUser.save().catch(err => {
       err.should.exist;
       err.name.should.equal("ValidationError");
-      done()
+      done();
     });
   }
 
@@ -85,7 +85,7 @@ class UserTest {
         savedUser.username.should.equal(this.data.username);
         savedUser.email.should.equal(this.data.email);
         savedUser.password.should.not.equal(this.data.password);
-        done()
+        done();
       });
     });
   }
