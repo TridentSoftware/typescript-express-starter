@@ -8,21 +8,25 @@ import {IUser} from "../interfaces/user";
 class UserTest {
   private data: IUser;
 
-  public static before() {
+  public static before(done: Function) {
+    //require chai and use should() assertions
+    let chai = require("chai");
+    chai.should();
+
     //use q promises
     global.Promise = require("q").Promise;
     //use q library for mongoose promise
     mongoose.Promise = global.Promise;
 
     //connect to mongoose and create model
-    mongoose.connect(dbconfig.connection + "_test");
-
-    //require chai and use should() assertions
-    let chai = require("chai");
-    chai.should();
+    mongoose.connect(dbconfig.connection + "_test").then(() => done());
   }
 
-  public before() {
+  public static after(done: Function) {
+    mongoose.disconnect().then(() => done());
+  }
+
+  public before(done: Function) {
     //new user data
     this.data = {
       firstName: "Bruce",
@@ -31,6 +35,8 @@ class UserTest {
       email: "bruce@wayneenterprises.com",
       password: "password1"
     } as IUser;
+
+    User.remove({}).then(() => done());
   }
 
   constructor() {
@@ -48,11 +54,7 @@ class UserTest {
       user.username.should.equal(this.data.username);
       user.email.should.equal(this.data.email);
       user.password.should.not.equal(this.data.password);
-    }).then(() =>{
-      User.remove({}).then(()=>{
-        done();
-      })
-    });
+    }).then(() => done());
   }
 
   @test("should validate a new User")
@@ -79,11 +81,7 @@ class UserTest {
         savedUser.username.should.equal(this.data.username);
         savedUser.email.should.equal(this.data.email);
         savedUser.password.should.not.equal(this.data.password);
-      }).then(() =>{
-        User.remove({}).then(()=>{
-          done();
-        })
-      });
+      }).then(() => done());
     });
   }
 }
