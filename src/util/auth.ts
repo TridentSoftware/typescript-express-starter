@@ -12,7 +12,7 @@ export const authUtil = {
 
     //see if this is out of span of counting, if so re-set count
     const mattempt = moment(user.lastLoginAttempt);
-    if (mattempt.add(loginSpanInMinutes, 'minutes') <= moment) {
+    if (mattempt.add(loginSpanInMinutes, "minutes") <= moment) {
       user.loginAttempts = 1;
     }
 
@@ -28,7 +28,7 @@ export const authUtil = {
     if (user.lockedOut && user.lastLockout) {
       const mlockout = moment(user.lastLockout);
       //see if they've served their time
-      if (mlockout.add(lockoutInMinutes, 'minutes') <= moment()) {
+      if (mlockout.add(lockoutInMinutes, "minutes") <= moment()) {
         user.lockedOut = false;
         user.loginAttempts = 0;
         user.save();

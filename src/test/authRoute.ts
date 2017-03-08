@@ -41,7 +41,7 @@ class AuthRouteTest {
     this.route = new AuthRoute();
     //noinspection TypeScriptUnresolvedFunction
     this.res = httpMocks.createResponse({
-      eventEmitter: require('events').EventEmitter
+      eventEmitter: require("events").EventEmitter
     });
 
     //new user data
