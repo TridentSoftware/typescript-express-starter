@@ -66,7 +66,7 @@ export class AuthRoute extends BaseRoute {
       // authUtil.calculateLockout(login);
       //
       // if (login.lockedOut){
-      //     res.json({success: false, message: "User account locked."});
+      //     httpUtil.unauthorized(res, "User account locked."});
       //     return;
       // }
 

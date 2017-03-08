@@ -7,15 +7,13 @@ const lockoutInMinutes = 5;
 
 export const authUtil = {
   loginAttempt: (user: IUser) => {
-    user.lastLoginAttempt = new Date();
     user.loginAttempts++;
-
     //see if this is out of span of counting, if so re-set count
-    const mattempt = moment(user.lastLoginAttempt);
-    if (mattempt.add(loginSpanInMinutes, "minutes") <= moment) {
+    const attemptTime = moment(user.lastLoginAttempt);
+    if (attemptTime.add(loginSpanInMinutes, "minutes") <= moment) {
       user.loginAttempts = 1;
     }
-
+    user.lastLoginAttempt = new Date();
     user.save();
   },
   loginSuccess: (user: IUser) => {
@@ -26,9 +24,9 @@ export const authUtil = {
   },
   calculateLockout: (user: IUser) => {
     if (user.lockedOut && user.lastLockout) {
-      const mlockout = moment(user.lastLockout);
+      const lockoutTime = moment(user.lastLockout);
       //see if they've served their time
-      if (mlockout.add(lockoutInMinutes, "minutes") <= moment()) {
+      if (lockoutTime.add(lockoutInMinutes, "minutes") <= moment()) {
         user.lockedOut = false;
         user.loginAttempts = 0;
         user.save();
@@ -36,7 +34,7 @@ export const authUtil = {
       }
     }
 
-    if (attemptsBeforeLockout < user.loginAttempts) {
+    if (user.loginAttempts < attemptsBeforeLockout) {
       user.lastLockout = new Date();
       user.lockedOut = true;
       user.save();
