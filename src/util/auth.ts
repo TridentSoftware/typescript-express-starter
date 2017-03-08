@@ -47,3 +47,8 @@ export const authUtil = {
 export interface AuthenticatedRequest extends Request {
   user: IUser;
 }
+
+export interface Credentials {
+  username?: string;
+  password?: string;
+}

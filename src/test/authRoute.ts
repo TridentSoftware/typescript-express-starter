@@ -3,8 +3,9 @@ import {User} from "../models/user";
 import {dbconfig} from "../config/database";
 import mongoose = require("mongoose");
 import {IUser} from "../interfaces/user";
-import {AuthRoute, Credentials} from "../routes/auth";
+import {AuthRoute} from "../routes/auth";
 import httpMocks = require("node-mocks-http");
+import {Credentials} from "../util/auth";
 
 @suite("Auth route tests")
 class AuthRouteTest {
