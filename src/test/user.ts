@@ -4,7 +4,7 @@ import {dbconfig} from "../config/database";
 import mongoose = require("mongoose");
 import {IUser} from "../interfaces/user";
 
-@suite("User object")
+@suite("User model tests")
 class UserTest {
   private data: IUser;
 
@@ -19,11 +19,13 @@ class UserTest {
     mongoose.Promise = global.Promise;
 
     //connect to mongoose and create model
-    mongoose.connect(dbconfig.connection + "_test").then(() => done());
+    mongoose.connect(dbconfig.connection + "_test").then(done());
   }
 
   public static after(done: Function) {
-    mongoose.disconnect().then(() => done());
+    User.remove({}).then(() => {
+      mongoose.disconnect().then(done());
+    });
   }
 
   public before(done: Function) {
@@ -36,7 +38,7 @@ class UserTest {
       password: "password1"
     } as IUser;
 
-    User.remove({}).then(() => done());
+    User.remove({}).then(done());
   }
 
   constructor() {
@@ -54,7 +56,8 @@ class UserTest {
       user.username.should.equal(this.data.username);
       user.email.should.equal(this.data.email);
       user.password.should.not.equal(this.data.password);
-    }).then(() => done());
+      done()
+    });
   }
 
   @test("should validate a new User")
@@ -65,7 +68,8 @@ class UserTest {
     newUser.save().catch(err => {
       err.should.exist;
       err.name.should.equal("ValidationError");
-    }).then(() => done());
+      done()
+    });
   }
 
   @test("should find a new User")
@@ -81,7 +85,8 @@ class UserTest {
         savedUser.username.should.equal(this.data.username);
         savedUser.email.should.equal(this.data.email);
         savedUser.password.should.not.equal(this.data.password);
-      }).then(() => done());
+        done()
+      });
     });
   }
 }
