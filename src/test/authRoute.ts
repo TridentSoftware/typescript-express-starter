@@ -70,12 +70,14 @@ class AuthRouteTest {
       headers: {
         "Content-Type": "application/json",
         "Accept": "applicaiton/json",
-        "Authorization": authToken,
         "Content-Length": Buffer.byteLength(postData)
       },
       host: "localhost",
       port: 3000
     };
+
+    if (authToken && authToken.length > 0)
+      result.headers["Authorization"] = authToken;
 
     return result;
   }
@@ -324,5 +326,39 @@ class AuthRouteTest {
       authPost.write(authPostData);
       authPost.end();
     });
+  }
+
+  @test("Should deny profile without token.")
+  public getProfileDenyNoToken(done: Function) {
+    const opts = this.buildRequestOptions("");
+    opts.path = "/api/auth/profile";
+    opts.method = "GET";
+
+    const get = http.request(opts, (res) => {
+      res.on("data", (chunk) => {
+        res.statusCode.should.equal(401);
+        done();
+      });
+    });
+
+    get.write("");
+    get.end();
+  }
+
+  @test("Should deny profile with bad token.")
+  public getProfileDenyBadToken(done: Function) {
+    const opts = this.buildRequestOptions("", "JWT kdsjfaosdjajflkjasdlkfja");
+    opts.path = "/api/auth/profile";
+    opts.method = "GET";
+
+    const get = http.request(opts, (res) => {
+      res.on("data", (chunk) => {
+        res.statusCode.should.equal(401);
+        done();
+      });
+    });
+
+    get.write("");
+    get.end();
   }
 }
