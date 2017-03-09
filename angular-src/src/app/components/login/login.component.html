@@ -1,0 +1,21 @@
+<h2 class="page-header">Login</h2>
+<form novalidate class="form" #loginForm="ngForm" (submit)="onLoginSubmit()">
+  <div class="form-group"
+       [ngClass]="{'has-error has-feedback': (username.errors && (username.dirty || username.touched))}">
+    <label>Username</label>
+    <input type="text" name="username" class="form-control"
+           [(ngModel)]="login.username"
+           #username="ngModel"
+           required>
+  </div>
+  <div class="form-group"
+       [ngClass]="{'has-error has-feedback': (password.errors && (password.dirty || password.touched))}">
+    <label>Password</label>
+    <input type="password" name="password" class="form-control"
+           [(ngModel)]="login.password"
+           #password="ngModel"
+           required>
+  </div>
+  <input type="submit" class="btn btn-primary" value="Login"
+         [disabled]="!loginForm.form.valid">
+</form>

@@ -1,0 +1,8 @@
+/* You can add global styles to this file, and also import other style files */
+.form-group.has-error input,
+.form-group.has-error select
+{ background-color: #FFF8F8;}
+
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
+}
