@@ -13,6 +13,7 @@ export class LoginComponent implements OnInit {
   login = new class Login {
     public username: string;
     public password: string;
+    public rememberMe: boolean;
   }();
 
   constructor(private messageService: MessageService,
@@ -25,7 +26,7 @@ export class LoginComponent implements OnInit {
 
   onLoginSubmit() {
     this.authService.authenticateUser(this.login).subscribe(data => {
-      this.authService.storeUserData(data.token, data.user);
+      this.authService.storeUserData(data.token, data.user, this.login.rememberMe);
       this.messageService.success('You are now logged in.');
       this.router.navigate(['/dashboard']);
     }, (err: any) => {

@@ -11,13 +11,14 @@ import {RegisterComponent} from './components/register/register.component';
 import {HomeComponent} from './components/home/home.component';
 import {DashboardComponent} from './components/dashboard/dashboard.component';
 import {ProfileComponent} from './components/profile/profile.component';
+import {NotFoundComponent} from './components/not-found/not-found.component';
 
 import {ValidateService} from './services/validate.service';
 import {AuthService} from './services/auth.service';
 import {MessageService} from './services/message.service';
 import {FlashMessagesModule} from 'angular2-flash-messages';
 import {AuthGuard} from "./guards/auth.guard";
-import {NotFoundComponent} from './components/not-found/not-found.component';
+import {EmailValidatorDirective} from './shared/email-validator.directive';
 
 const appRoutes: Routes = [
   {path: '', component: HomeComponent},
@@ -37,7 +38,8 @@ const appRoutes: Routes = [
     HomeComponent,
     DashboardComponent,
     ProfileComponent,
-    NotFoundComponent
+    NotFoundComponent,
+    EmailValidatorDirective
   ],
   imports: [
     BrowserModule,

@@ -29,6 +29,7 @@ export class RegisterComponent implements OnInit {
   }
 
   onRegisterSubmit() {
+    //double check this, also in a directive
     if (!this.validateService.validateEmail(this.user.email)) {
       this.messageService.danger('Invalid email.');
       return false;

@@ -16,7 +16,7 @@ export class AuthService {
   }
 
   getHeaders(): Headers{
-    this.authToken = localStorage.getItem('id_token');
+    this.loadToken();
     let result = new Headers();
     result.append('Content-Type', 'application/json');
     result.append('Accept', 'application/json');
@@ -43,20 +43,32 @@ export class AuthService {
       .map(res => res.json());
   }
 
-  storeUserData(token, user){
-    localStorage.setItem('id_token', token);
-    localStorage.setItem('user', JSON.stringify(user));
+  storeUserData(token: string, user: any, rememberMe: boolean){
+    if (rememberMe) {
+      localStorage.setItem('id_token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+    } else {
+      sessionStorage.setItem('id_token', token);
+      sessionStorage.setItem('user', JSON.stringify(user));
+    }
     this.authToken = token;
     this.user = user;
   }
 
+  loadToken(){
+    this.authToken = sessionStorage.getItem('id_token') ||
+        localStorage.getItem('id_token');
+  }
+
   loggedIn(){
-    return tokenNotExpired();
+    this.loadToken();
+    return tokenNotExpired(null, this.authToken);
   }
 
   logout(){
     this.authToken = null;
     this.user = null;
+    sessionStorage.clear();
     localStorage.clear();
   }
 }
