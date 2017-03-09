@@ -35,7 +35,7 @@
     <div class="form-group"
          [ngClass]="{'has-error has-feedback': (password.errors && (password.dirty || password.touched))}">
         <label>Password</label>
-        <input type="text" name="password" class="form-control"
+        <input type="password" name="password" class="form-control"
                [(ngModel)]="user.password"
                #password="ngModel"
                required>

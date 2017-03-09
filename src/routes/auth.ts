@@ -11,27 +11,27 @@ import jwt = require("jsonwebtoken");
 
 export class AuthRoute extends BaseRoute {
 
-  public static create(router: Router) {
+  public static create(router: Router, baseDir: string = null) {
     console.log("[AuthRoute::create] Creating auth route.");
 
     //login
     router.post("/auth", (req: Request, res: Response, next: NextFunction) => {
-      new AuthRoute().auth(req, res, next);
+      new AuthRoute(baseDir).auth(req, res, next);
     });
     //register
     router.post("/auth/register", (req: Request, res: Response, next: NextFunction) => {
-      new AuthRoute().register(req, res, next);
+      new AuthRoute(baseDir).register(req, res, next);
     });
     //profile
     router.get("/auth/profile",
       passport.authenticate("jwt", {session: false}),
       (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-        new AuthRoute().profile(req, res, next);
+        new AuthRoute(baseDir).profile(req, res, next);
       });
   }
 
-  constructor() {
-    super();
+  constructor(baseDir: string = null) {
+    super(baseDir);
   }
 
   public auth(req: Request, res: Response, next: NextFunction) {

@@ -1,6 +1,6 @@
-.tscache
-.idea
-.baseDir.ts
-dist
-node_modules
+.tscache/
+.idea/
+dist/
+node_modules/
 *.log
+public/

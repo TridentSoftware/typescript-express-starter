@@ -52,11 +52,11 @@ export class Server {
     //configure application
     this.config();
 
-    //add routes
-    this.routes();
-
     //add api
     this.api();
+
+    //add routes
+    this.routes();
   }
 
   /**
@@ -69,7 +69,7 @@ export class Server {
     let router: express.Router;
     router = express.Router();
 
-    AuthRoute.create(router);
+    AuthRoute.create(router, __dirname);
 
     //use router middleware
     this.app.use("/api", router);
@@ -153,7 +153,7 @@ export class Server {
     router = express.Router();
 
     //IndexRoute
-    IndexRoute.create(router);
+    IndexRoute.create(router, __dirname);
 
     //use router middleware
     this.app.use(router);

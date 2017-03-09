@@ -1,35 +1,45 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
+import { environment } from '../../environments/environment';
 import 'rxjs/add/operator/map';
 import { tokenNotExpired } from 'angular2-jwt';
 
 @Injectable()
 export class AuthService {
+  private baseUrl: string;
   authToken: any;
   user: any;
 
-  constructor(private http: Http) { }
+  constructor(private http: Http) {
+    this.baseUrl = environment.baseUrl + '/api';
+    console.log(this.baseUrl);
+  }
+
+  getHeaders(): Headers{
+    this.authToken = localStorage.getItem('id_token');
+    let result = new Headers();
+    result.append('Content-Type', 'application/json');
+    result.append('Accept', 'application/json');
+    if (this.authToken)
+      result.append('Authorization', this.authToken);
+    return result;
+  }
 
   registerUser(user){
-    let headers = new Headers();
-    headers.append('Content-Type', 'application/json');
-    return this.http.post('http://localhost:3000/api/auth/register', user, {headers: headers})
+    const headers = this.getHeaders();
+    return this.http.post(this.baseUrl + '/auth/register', user, {headers: headers})
       .map(res => res.json());
   }
 
   authenticateUser(user){
-    let headers = new Headers();
-    headers.append('Content-Type', 'application/json');
-    return this.http.post('http://localhost:3000/api/auth', user, {headers: headers})
+    const headers = this.getHeaders();
+    return this.http.post(this.baseUrl + '/auth', user, {headers: headers})
       .map(res => res.json());
   }
 
   getProfile(){
-    let headers = new Headers();
-    this.loadToken();
-    headers.append('Authorization', this.authToken);
-    headers.append('Content-Type', 'application/json');
-    return this.http.get('http://localhost:3000/api/users/profile', {headers: headers})
+    const headers = this.getHeaders();
+    return this.http.get(this.baseUrl + '/auth/profile', {headers: headers})
       .map(res => res.json());
   }
 
@@ -38,10 +48,6 @@ export class AuthService {
     localStorage.setItem('user', JSON.stringify(user));
     this.authToken = token;
     this.user = user;
-  }
-
-  loadToken(){
-    this.authToken = localStorage.getItem('id_token');;
   }
 
   loggedIn(){

@@ -18,7 +18,7 @@ export class BaseRoute {
    * @class BaseRoute
    * @constructor
    */
-  constructor() {
+  constructor(public baseDir: string) {
     //initialize variables
     this.title = "Tour of Heros";
     this.scripts = [];

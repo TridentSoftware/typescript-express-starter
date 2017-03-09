@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { BaseRoute } from "./route";
+import * as path from "path";
 
 
 /**
@@ -16,13 +17,13 @@ export class IndexRoute extends BaseRoute {
    * @method create
    * @static
    */
-  public static create(router: Router) {
+  public static create(router: Router, baseDir: string = null) {
     //log
     console.log("[IndexRoute::create] Creating index route.");
 
     //add home page route
-    router.get("/", (req: Request, res: Response, next: NextFunction) => {
-      new IndexRoute().index(req, res, next);
+    router.get("*", (req: Request, res: Response, next: NextFunction) => {
+      new IndexRoute(baseDir).index(req, res, next);
     });
   }
 
@@ -32,8 +33,8 @@ export class IndexRoute extends BaseRoute {
    * @class IndexRoute
    * @constructor
    */
-  constructor() {
-    super();
+  constructor(baseDir: string = null) {
+    super(baseDir);
   }
 
   /**
@@ -46,15 +47,6 @@ export class IndexRoute extends BaseRoute {
    * @next {NextFunction} Execute the next method.
    */
   public index(req: Request, res: Response, next: NextFunction) {
-    //set custom title
-    this.title = "Home | Tour of Heros";
-
-    //set message
-    let options: Object = {
-      "message": "Welcome to the Tour of Heros"
-    };
-
-    //render template
-    this.render(req, res, "index", options);
+    res.sendFile(path.join(this.baseDir, 'public/index.html'));
   }
 }
