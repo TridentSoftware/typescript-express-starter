@@ -87,8 +87,12 @@ export class Server {
    * @method config
    */
   public config() {
-    //cors
-    this.app.use(cors());
+    const env: string = process.env.NODE_ENV || "development";
+
+    if (env === "development") {
+      //cors only in development
+      this.app.use(cors());
+    }
     //helmet
     this.app.use(helmet());
 
