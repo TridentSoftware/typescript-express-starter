@@ -336,6 +336,7 @@ class AuthRouteTest {
     opts.method = "GET";
 
     const get = http.request(opts, (res) => {
+      res.setEncoding("utf8");
       res.on("data", (chunk) => {
         res.statusCode.should.equal(401);
         done();
@@ -353,6 +354,7 @@ class AuthRouteTest {
     opts.method = "GET";
 
     const get = http.request(opts, (res) => {
+      res.setEncoding("utf8");
       res.on("data", (chunk) => {
         res.statusCode.should.equal(401);
         done();
