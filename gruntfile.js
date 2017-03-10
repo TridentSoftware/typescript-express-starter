@@ -7,9 +7,16 @@ module.exports = function (grunt) {
         files: [
           {//copy configs
             expand: true,
-            cwd: "./config",
-            src: ["**"],
-            dest: "./dist/config"
+            cwd: "./",
+            src: ["./\*\*/\*.config", "./\*\*/\*.json", "!./node_modules/**"],
+            dest: "./dist"
+          },
+          {//copy server
+            expand: true,
+            flatten: true,
+            cwd: "./",
+            src: ["./bin/www.js"],
+            dest: "./dist"
           },
           {//copy public files
             expand: true,
@@ -53,7 +60,7 @@ module.exports = function (grunt) {
         tasks: ["copy"]
       },
       config: {
-        files: ["config/**/*.json"],
+        files: ["./**/*.json", "./**/*.config"],
         tasks: ["copy"]
       }
     }
