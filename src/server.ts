@@ -57,11 +57,11 @@ export class Server {
     //configure application
     this.config();
 
-    //add routes
-    this.routes();
-
     //add api
     this.api();
+
+    //add routes
+    this.routes();
 
     //error handling
     this.handleErrors();
@@ -160,7 +160,7 @@ export class Server {
     router = express.Router();
 
     //IndexRoute
-    IndexRoute.create(router);
+    IndexRoute.create(router, __dirname);
 
     //use router middleware
     this.app.use(router);

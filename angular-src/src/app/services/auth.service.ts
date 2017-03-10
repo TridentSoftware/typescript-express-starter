@@ -56,8 +56,8 @@ export class AuthService {
   }
 
   loadToken(){
-    this.authToken = sessionStorage.getItem('id_token') ||
-        localStorage.getItem('id_token');
+    this.authToken = localStorage.getItem('id_token') ||
+      sessionStorage.getItem('id_token');
   }
 
   loggedIn(){
