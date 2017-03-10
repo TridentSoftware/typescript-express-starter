@@ -309,6 +309,7 @@ class AuthRouteTest {
           profileOpts.method = "GET";
 
           const profileGet = http.request(profileOpts, (profileRes) => {
+            profileRes.setEncoding("utf8");
             profileRes.on("data", (chunk) => {
               const data: any = JSON.parse(chunk.toString());
               data.user.should.exist;
