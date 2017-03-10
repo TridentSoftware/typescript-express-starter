@@ -1,0 +1,8 @@
+{
+  "app": {
+    "secret": "My super safe secret 12334$#@%"
+  },
+  "database": {
+    "connection": "mongodb://localhost:27017/expressts"
+  }
+}

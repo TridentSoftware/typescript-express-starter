@@ -1,7 +1,7 @@
 import mongoose = require("mongoose"); //import mongoose
 const Schema = mongoose.Schema;
 import bcrypt = require("bcryptjs");
-import {dbconfig} from "../config/database";
+import {dbUtil} from "../util/database";
 import {IUser} from "../interfaces/user";
 
 const UserSchema = new Schema({
@@ -27,7 +27,7 @@ const UserSchema = new Schema({
 });
 
 //if you want audit fields
-dbconfig.addAuditFields(UserSchema);
+dbUtil.addAuditFields(UserSchema);
 
 UserSchema.methods.comparePassword = function(clearPassword: string, callback: Function) {
   bcrypt.compare(clearPassword, this.password, (err, isMatch) => {

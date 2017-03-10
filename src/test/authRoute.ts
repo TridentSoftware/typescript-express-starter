@@ -1,6 +1,6 @@
 import {suite, test} from "mocha-typescript";
 import {User} from "../models/user";
-import {dbconfig} from "../config/database";
+import * as config from "config";
 import mongoose = require("mongoose");
 import {IUser} from "../interfaces/user";
 import {Credentials} from "../util/auth";
@@ -9,11 +9,11 @@ import * as http from "http";
 /**
  * This test suite must have the development server running!
  */
-@suite("Auth route tests")
+@suite("Auth route tests (over http)")
 class AuthRouteTest {
-  private to: number = 200;
   private registerData: IUser;
   private existingUser: IUser;
+  private static testusers: string[] = ["testuser:batman", "testuser:batman1"];
 
   public static before(done: Function) {
     //require chai and use should() assertions
@@ -26,12 +26,12 @@ class AuthRouteTest {
     mongoose.Promise = global.Promise;
 
     //connect to mongoose and create model
-    mongoose.connect(dbconfig.connection).then(done());
+    mongoose.connect(config.get("database.connection")).then(done());
   }
 
   public static after(done: Function) {
     User.remove({
-      username: {$in: ["batman", "batman1"]}
+      username: {$in: this.testusers }
     }).then(() => {
       mongoose.disconnect().then(done());
     });
@@ -42,7 +42,7 @@ class AuthRouteTest {
     this.registerData = {
       firstName: "Bruce",
       lastName: "Wayne",
-      username: "batman",
+      username: AuthRouteTest.testusers[0],
       email: "bruce@wayneenterprises.com",
       password: "password1"
     } as IUser;
@@ -51,13 +51,13 @@ class AuthRouteTest {
     this.existingUser = {
       firstName: "Bruce",
       lastName: "Wayne",
-      username: "batman1",
+      username: AuthRouteTest.testusers[1],
       email: "bruce1@wayneenterprises.com",
       password: "password1"
     } as IUser;
 
     User.remove({
-      username: {$in: ["batman", "batman1"]}
+      username: {$in: AuthRouteTest.testusers}
     }).then(done());
   }
 

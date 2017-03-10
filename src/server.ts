@@ -6,12 +6,14 @@ import * as path from "path";
 import * as cors from "cors";
 import * as helmet from "helmet";
 import * as passport from "passport";
+import * as winston from "winston";
+import * as expressWinston from "express-winston";
 import errorHandler = require("errorhandler");
 import methodOverride = require("method-override");
 import mongoose = require("mongoose"); //import mongoose
 
 //config
-import {dbconfig} from "./config/database";
+import * as config from "config";
 import {configureJwt} from "./config/passport";
 
 //routes
@@ -46,17 +48,23 @@ export class Server {
    * @constructor
    */
   constructor() {
+    //noinspection TypeScriptUnresolvedFunction
+    console.log('Configuration directory: ' + config.util.getEnv('CONFIG_DIR'));
+
     //create expressjs application
     this.app = express();
 
     //configure application
     this.config();
 
+    //add routes
+    this.routes();
+
     //add api
     this.api();
 
-    //add routes
-    this.routes();
+    //error handling
+    this.handleErrors();
   }
 
   /**
@@ -69,7 +77,7 @@ export class Server {
     let router: express.Router;
     router = express.Router();
 
-    AuthRoute.create(router, __dirname);
+    AuthRoute.create(router);
 
     //use router middleware
     this.app.use("/api", router);
@@ -107,7 +115,8 @@ export class Server {
     }));
 
     //mount cookie parker
-    this.app.use(cookieParser(dbconfig.secret));
+    const secret = config.get("app.secret")
+    this.app.use(cookieParser(secret));
 
     //passport middleware
     this.app.use(passport.initialize());
@@ -123,9 +132,10 @@ export class Server {
     mongoose.Promise = global.Promise;
 
     //connect to mongoose
-    mongoose.connect(dbconfig.connection);
+    const connection = config.get("database.connection");
+    mongoose.connect(connection);
     mongoose.connection.on("connected", () => {
-      console.log("Connected to database " + dbconfig.connection);
+      console.log("Connected to database " + connection);
     });
     mongoose.connection.on("error", (err) => {
       console.log("Database error " + err);
@@ -136,9 +146,6 @@ export class Server {
       err.status = 404;
       next(err);
     });
-
-    //error handling
-    this.app.use(errorHandler());
   }
 
   /**
@@ -153,10 +160,25 @@ export class Server {
     router = express.Router();
 
     //IndexRoute
-    IndexRoute.create(router, __dirname);
+    IndexRoute.create(router);
 
     //use router middleware
     this.app.use(router);
   }
 
+  private handleErrors() {
+    // express-winston errorLogger makes sense AFTER the router.
+    //noinspection TypeScriptUnresolvedFunction
+    this.app.use(expressWinston.errorLogger({
+      transports: [
+        new winston.transports.Console({
+          json: true,
+          colorize: true
+        })
+      ]
+    }));
+
+    //error handling
+    this.app.use(errorHandler());
+  }
 }

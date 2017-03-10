@@ -4,7 +4,7 @@ import {httpUtil} from "../util/http";
 import {User} from "../models/user";
 import {authUtil, AuthenticatedRequest, Credentials} from "../util/auth";
 import {validateUtil} from "../util/validate";
-import {dbconfig} from "../config/database";
+import * as config from "config";
 import * as passport from "passport";
 import {IUser} from "../interfaces/user";
 import jwt = require("jsonwebtoken");
@@ -77,7 +77,7 @@ export class AuthRoute extends BaseRoute {
         if (isMatch) {
           authUtil.loginSuccess(user);
 
-          const token = jwt.sign(user, dbconfig.secret, {
+          const token = jwt.sign(user, config.get("app.secret"), {
             expiresIn: 604800 //a week (in seconds)
           });
 
@@ -103,7 +103,6 @@ export class AuthRoute extends BaseRoute {
 
   public register(req: Request, res: Response, next: NextFunction) {
     const newUser = new User(req.body);
-
     newUser.save().then(user => {
       res.json({success: true, message: "User registered."});
     }).catch(err => {
