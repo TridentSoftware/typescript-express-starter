@@ -1,14 +1,17 @@
 {
-  "name": "heros",
-  "description": "The tour of heros",
+  "name": "MyApp",
+  "description": "MyApp description",
   "version": "1.0.0",
   "private": true,
-  "author": "Brian Love",
+  "author": "Author Name",
   "scripts": {
-    "dev": "NODE_ENV=development nodemon ./bin/www",
+    "dev": "NODE_ENV=development nodemon ./bin/www.js",
     "grunt": "grunt",
     "test": "mocha dist/test",
-    "start": "node ./bin/www"
+    "start": "node ./bin/www.js"
+  },
+  "engines": {
+    "node": "6.9.1"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

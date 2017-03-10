@@ -2,7 +2,13 @@
 "use strict";
 
 //module dependencies
-var server = require("../dist/server");
+var env = process.env.NODE_ENV || "development";
+var server;
+if (env !== "development")
+  server = require("./server");
+else
+  server = require("../dist/server");
+
 var http = require("http");
 
 //create http server

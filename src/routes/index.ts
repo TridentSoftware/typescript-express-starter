@@ -47,11 +47,12 @@ export class IndexRoute extends BaseRoute {
    */
   public index(req: Request, res: Response, next: NextFunction) {
     //set custom title
-    this.title = "Home | Tour of Heros";
+    this.title = "Home | MEAN app";
 
     //set message
     let options: Object = {
-      "message": "Welcome to the Tour of Heros"
+      "message": "Welcome to the MEAN app!",
+      "env": process.env.NODE_ENV || "development"
     };
 
     //render template
