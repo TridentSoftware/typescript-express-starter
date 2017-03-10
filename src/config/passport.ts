@@ -1,11 +1,11 @@
 import {Strategy as JwtStrategy, ExtractJwt} from "passport-jwt";
-import {dbconfig} from "./database";
+import * as config from "config";
 import {User} from "../models/user";
 
 export const configureJwt = (passport) => {
     let opts = {
         jwtFromRequest: ExtractJwt.fromAuthHeader(),
-        secretOrKey: dbconfig.secret
+        secretOrKey: config.get("app.secret")
     };
 
     passport.use(new JwtStrategy(opts, (jwt_payload, done) => {

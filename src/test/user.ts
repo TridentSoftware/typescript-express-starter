@@ -1,12 +1,13 @@
 import {suite, test} from "mocha-typescript";
 import {User} from "../models/user";
-import {dbconfig} from "../config/database";
+import * as config from "config";
 import mongoose = require("mongoose");
 import {IUser} from "../interfaces/user";
 
 @suite("User model tests")
 class UserTest {
   private data: IUser;
+  private static testusers: string[] = ["testuser:batman"];
 
   public static before(done: Function) {
     //require chai and use should() assertions
@@ -19,11 +20,13 @@ class UserTest {
     mongoose.Promise = global.Promise;
 
     //connect to mongoose and create model
-    mongoose.connect(dbconfig.connection + "_test").then(done());
+    mongoose.connect(config.get("database.connection")).then(done());
   }
 
   public static after(done: Function) {
-    User.remove({}).then(() => {
+    User.remove({
+      username: {$in: this.testusers }
+    }).then(() => {
       mongoose.disconnect().then(done());
     });
   }
@@ -33,19 +36,21 @@ class UserTest {
     this.data = {
       firstName: "Bruce",
       lastName: "Wayne",
-      username: "batman",
+      username: UserTest.testusers[0],
       email: "bruce@wayneenterprises.com",
       password: "password1"
     } as IUser;
 
-    User.remove({}).then(done());
+    User.remove({
+      username: {$in: UserTest.testusers}
+    }).then(done());
   }
 
   constructor() {
 
   }
 
-  @test("should create a new User")
+  @test("Should create a new User")
   public create(done: Function) {
     const newUser = new User(this.data);
 
@@ -60,7 +65,7 @@ class UserTest {
     });
   }
 
-  @test("should validate a new User")
+  @test("Should validate a new User")
   public validation(done: Function) {
     this.data.firstName = null;
     const newUser = new User(this.data);
@@ -72,7 +77,7 @@ class UserTest {
     });
   }
 
-  @test("should find a new User")
+  @test("Should find a new User")
   public find(done: Function) {
     const newUser = new User(this.data);
 

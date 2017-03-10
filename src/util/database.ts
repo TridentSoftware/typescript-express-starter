@@ -1,6 +1,6 @@
 import {Schema} from "mongoose";
 
-class dbconfigClass {
+class dbutilClass {
   private auditFieldSchema = {
     createdOn: {type: Date, default: Date.now},
     updatedOn: {type: Date, default: Date.now},
@@ -20,4 +20,4 @@ class dbconfigClass {
   }
 }
 
-export const dbconfig = new dbconfigClass();
+export const dbUtil = new dbutilClass();

@@ -3,7 +3,6 @@
 
 //module dependencies
 var server = require("../dist/server");
-//var debug = require("debug")("express:server");
 var http = require("http");
 
 //create http server

@@ -1,7 +1,7 @@
 /*
 import mongoose = require("mongoose"); //import mongoose
 const Schema = mongoose.Schema;
-import {dbconfig} from "../config/database";
+import {dbUtil} from "../util/database";
 
 const ProfileSchema = new Schema({
   loginId: {type: Schema.Types.ObjectId, required: true, unique: true, ref: "users"},
@@ -25,7 +25,7 @@ const ProfileSchema = new Schema({
 });
 
 //if you want audit fields
-dbconfig.addAuditFields(ProfileSchema);
+dbUtil.addAuditFields(ProfileSchema);
 
 export const Profile = mongoose.model("Profile", ProfileSchema);
 */
