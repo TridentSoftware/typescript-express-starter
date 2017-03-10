@@ -54,11 +54,11 @@ export class Server {
     //configure application
     this.config();
 
-    //add routes
-    this.routes();
-
     //add api
     this.api();
+
+    //add routes
+    this.routes();
 
     //error handling
     this.handleErrors();
