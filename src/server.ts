@@ -48,9 +48,6 @@ export class Server {
    * @constructor
    */
   constructor() {
-    //noinspection TypeScriptUnresolvedFunction
-    console.log('Configuration directory: ' + config.util.getEnv('CONFIG_DIR'));
-
     //create expressjs application
     this.app = express();
 
