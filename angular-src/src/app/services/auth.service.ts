@@ -8,8 +8,10 @@ import { tokenNotExpired } from 'angular2-jwt';
 export class AuthService {
   authToken: any;
   user: any;
+  private baseUrl: string;
 
   constructor(private http: Http) {
+    this.baseUrl = environment.baseUrl + '/api';
   }
 
   getHeaders(): Headers{
@@ -24,19 +26,19 @@ export class AuthService {
 
   registerUser(user){
     const headers = this.getHeaders();
-    return this.http.post('/api/auth/register', user, {headers: headers})
+    return this.http.post(this.baseUrl + '/auth/register', user, {headers: headers})
       .map(res => res.json());
   }
 
   authenticateUser(user){
     const headers = this.getHeaders();
-    return this.http.post('/api/auth', user, {headers: headers})
+    return this.http.post(this.baseUrl + '/auth', user, {headers: headers})
       .map(res => res.json());
   }
 
   getProfile(){
     const headers = this.getHeaders();
-    return this.http.get('/api/auth/profile', {headers: headers})
+    return this.http.get(this.baseUrl + '/auth/profile', {headers: headers})
       .map(res => res.json());
   }
 
