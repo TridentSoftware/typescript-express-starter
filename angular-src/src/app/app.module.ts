@@ -19,6 +19,7 @@ import {MessageService} from './services/message.service';
 import {FlashMessagesModule} from 'angular2-flash-messages';
 import {AuthGuard} from "./guards/auth.guard";
 import {EmailValidatorDirective} from './shared/email-validator.directive';
+import {UsernameValidatorDirective} from './shared/username-validator.directive';
 
 const appRoutes: Routes = [
   {path: '', component: HomeComponent},
@@ -39,7 +40,8 @@ const appRoutes: Routes = [
     DashboardComponent,
     ProfileComponent,
     NotFoundComponent,
-    EmailValidatorDirective
+    EmailValidatorDirective,
+    UsernameValidatorDirective
   ],
   imports: [
     BrowserModule,

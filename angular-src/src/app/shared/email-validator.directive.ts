@@ -31,4 +31,4 @@ export function emailValidator(): ValidatorFn {
     const yes = re.test(email);
     return !yes ? {'email': {name}} : null;
   }
-};
+}

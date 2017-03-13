@@ -46,9 +46,10 @@ export class AuthRoute extends BaseRoute {
       return next();
     }
 
+    const usernameRegex: RegExp = new RegExp(["^", creds.username, "$"].join(""), "i");
     const query = {
       //realm: creds.realm,
-      username: creds.username,
+      username: usernameRegex,
       deleted: false
     };
     User.findOne(query).then(user => {
