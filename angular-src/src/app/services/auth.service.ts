@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
 import { environment } from '../../environments/environment';
 import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/toPromise';
 import { tokenNotExpired } from 'angular2-jwt';
 
 @Injectable()
@@ -26,19 +27,19 @@ export class AuthService {
   registerUser(user){
     const headers = this.getHeaders();
     return this.http.post(this.baseUrl + '/auth/register', user, {headers: headers})
-      .map(res => res.json());
+      .map(res => res.json()).toPromise();
   }
 
   authenticateUser(user){
     const headers = this.getHeaders();
     return this.http.post(this.baseUrl + '/auth', user, {headers: headers})
-      .map(res => res.json());
+      .map(res => res.json()).toPromise();
   }
 
   getProfile(){
     const headers = this.getHeaders();
     return this.http.get(this.baseUrl + '/auth/profile', {headers: headers})
-      .map(res => res.json());
+      .map(res => res.json()).toPromise();
   }
 
   storeUserData(token: string, user: UserInfo, rememberMe: boolean){
@@ -53,8 +54,15 @@ export class AuthService {
   }
 
   getUserInfo(): UserInfo {
-    const result: UserInfo = JSON.parse(localStorage.getItem('user') ||
-      sessionStorage.getItem('user'));
+    let tryCount = 1;
+    let result: UserInfo;
+
+    while(!result && tryCount <= 5){
+      tryCount++;
+      result = JSON.parse(localStorage.getItem('user') ||
+        sessionStorage.getItem('user'));
+    }
+
     return result;
   }
 

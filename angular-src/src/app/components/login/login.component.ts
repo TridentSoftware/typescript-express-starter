@@ -25,11 +25,12 @@ export class LoginComponent implements OnInit {
   }
 
   onLoginSubmit() {
-    this.authService.authenticateUser(this.login).subscribe(data => {
+    this.authService.authenticateUser(this.login).then(data => {
       this.authService.storeUserData(data.token, data.user, this.login.rememberMe);
       this.messageService.success('You are now logged in.');
+      this.authService.getUserInfo()
       this.router.navigate(['/dashboard']);
-    }, (err: any) => {
+    }).catch((err: any) => {
       if (err instanceof Response) {
         const res = err.json();
         this.messageService.danger(res.message);

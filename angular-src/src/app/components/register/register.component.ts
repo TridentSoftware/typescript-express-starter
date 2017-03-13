@@ -36,14 +36,14 @@ export class RegisterComponent implements OnInit {
     }
 
     //register user
-    this.authService.registerUser(this.user).subscribe(data => {
+    this.authService.registerUser(this.user).then(data => {
       if (data.success) {
         this.messageService.success('You are now registered and can log in.');
         this.router.navigate(['/login']);
       } else {
         this.messageService.danger('Something went wrong.');
       }
-    }, (err: any) => {
+    }).catch((err: any) => {
       if (err instanceof Response) {
         const res = err.json();
         this.messageService.danger(res.message);
