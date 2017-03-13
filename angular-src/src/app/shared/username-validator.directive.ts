@@ -26,7 +26,7 @@ export class UsernameValidatorDirective implements Validator, OnChanges {
 export function usernameValidator(): ValidatorFn {
   return (control: AbstractControl): {[key: string]: any} => {
     const username = control.value;
-    const re = /[A-Za-z][A-Za-z0-9._-]{2,20}/g;
+    const re = /^[a-zA-Z0-9]{2,}$/g;
     const yes = re.test(username);
     return !yes ? {'username': {name}} : null;
   }
