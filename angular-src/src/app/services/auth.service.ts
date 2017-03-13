@@ -7,7 +7,6 @@ import { tokenNotExpired } from 'angular2-jwt';
 @Injectable()
 export class AuthService {
   authToken: any;
-  user: any;
   private baseUrl: string;
 
   constructor(private http: Http) {
@@ -42,7 +41,7 @@ export class AuthService {
       .map(res => res.json());
   }
 
-  storeUserData(token: string, user: any, rememberMe: boolean){
+  storeUserData(token: string, user: UserInfo, rememberMe: boolean){
     if (rememberMe) {
       localStorage.setItem('id_token', token);
       localStorage.setItem('user', JSON.stringify(user));
@@ -51,7 +50,12 @@ export class AuthService {
       sessionStorage.setItem('user', JSON.stringify(user));
     }
     this.authToken = token;
-    this.user = user;
+  }
+
+  getUserInfo(): UserInfo {
+    const result: UserInfo = JSON.parse(localStorage.getItem('user') ||
+      sessionStorage.getItem('user'));
+    return result;
   }
 
   loadToken(){
@@ -66,8 +70,14 @@ export class AuthService {
 
   logout(){
     this.authToken = null;
-    this.user = null;
     sessionStorage.clear();
     localStorage.clear();
   }
+}
+
+export interface UserInfo {
+  firstName: string,
+  lastName: string,
+  username: string,
+  email: string
 }

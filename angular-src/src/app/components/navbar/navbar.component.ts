@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {AuthService} from '../../services/auth.service';
+import {AuthService, UserInfo} from '../../services/auth.service';
 import {MessageService} from '../../services/message.service';
 import {Router} from '@angular/router';
 
@@ -9,10 +9,12 @@ import {Router} from '@angular/router';
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent implements OnInit {
+  public userInfo: UserInfo;
 
   constructor(private messageService: MessageService,
               private authService: AuthService,
               private router: Router) {
+    this.userInfo = authService.getUserInfo();
   }
 
   ngOnInit() {
