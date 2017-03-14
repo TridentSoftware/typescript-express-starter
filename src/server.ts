@@ -116,7 +116,7 @@ export class Server {
     }));
 
     //mount cookie parker
-    const secret = config.get("app.secret")
+    const secret = config.get("app.secret");
     this.app.use(cookieParser(secret));
 
     //passport middleware
