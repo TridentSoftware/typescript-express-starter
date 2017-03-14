@@ -54,22 +54,10 @@ export class AuthService {
   }
 
   getUserInfo(): UserInfo {
-    let tryCount = 1;
-    let timeoutId: any;
-    let result: UserInfo = null;
-    //try now
-    result = JSON.parse(localStorage.getItem('user') ||
-      sessionStorage.getItem('user'));
-    //didn't get it, try a bit
-    while (!result && tryCount <= 5) {
-       timeoutId = window.setTimeout(() => {
-        result = JSON.parse(localStorage.getItem('user') ||
-          sessionStorage.getItem('user'));
-      }, 100)
-    }
-    window.clearTimeout(timeoutId);
-    console.log(tryCount + " : " + JSON.stringify(result))
-    return result as UserInfo;
+      let result: UserInfo;
+      result = JSON.parse(localStorage.getItem('user') ||
+        sessionStorage.getItem('user'));
+      return result;
   }
 
   loadToken() {
@@ -90,8 +78,8 @@ export class AuthService {
 }
 
 export interface UserInfo {
-  firstName: string,
-  lastName: string,
-  username: string,
-  email: string
+  firstName?: string,
+  lastName?: string,
+  username?: string,
+  email?: string
 }

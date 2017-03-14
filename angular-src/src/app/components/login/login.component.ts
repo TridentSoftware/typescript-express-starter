@@ -28,7 +28,6 @@ export class LoginComponent implements OnInit {
     this.authService.authenticateUser(this.login).then(data => {
       this.authService.storeUserData(data.token, data.user, this.login.rememberMe);
       this.messageService.success('You are now logged in.');
-      this.authService.getUserInfo()
       this.router.navigate(['/dashboard']);
     }).catch((err: any) => {
       if (err instanceof Response) {
