@@ -20,6 +20,7 @@ import {FlashMessagesModule} from 'angular2-flash-messages';
 import {AuthGuard} from "./guards/auth.guard";
 import {EmailValidatorDirective} from './shared/email-validator.directive';
 import {UsernameValidatorDirective} from './shared/username-validator.directive';
+import {SetFocusDirective} from './shared/set-focus.directive';
 
 const appRoutes: Routes = [
   {path: '', component: HomeComponent},
@@ -41,7 +42,8 @@ const appRoutes: Routes = [
     ProfileComponent,
     NotFoundComponent,
     EmailValidatorDirective,
-    UsernameValidatorDirective
+    UsernameValidatorDirective,
+    SetFocusDirective
   ],
   imports: [
     BrowserModule,
