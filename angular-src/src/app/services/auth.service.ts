@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
-import { Http, Headers } from '@angular/http';
-import { environment } from '../../environments/environment';
+import {Injectable} from '@angular/core';
+import {Http, Headers} from '@angular/http';
+import {environment} from '../../environments/environment';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
-import { tokenNotExpired } from 'angular2-jwt';
+import {tokenNotExpired} from 'angular2-jwt';
 
 @Injectable()
 export class AuthService {
@@ -14,7 +14,7 @@ export class AuthService {
     this.baseUrl = environment.baseUrl + '/api';
   }
 
-  getHeaders(): Headers{
+  getHeaders(): Headers {
     this.loadToken();
     let result = new Headers();
     result.append('Content-Type', 'application/json');
@@ -24,25 +24,25 @@ export class AuthService {
     return result;
   }
 
-  registerUser(user){
+  registerUser(user) {
     const headers = this.getHeaders();
     return this.http.post(this.baseUrl + '/auth/register', user, {headers: headers})
       .map(res => res.json()).toPromise();
   }
 
-  authenticateUser(user){
+  authenticateUser(user) {
     const headers = this.getHeaders();
     return this.http.post(this.baseUrl + '/auth', user, {headers: headers})
       .map(res => res.json()).toPromise();
   }
 
-  getProfile(){
+  getProfile() {
     const headers = this.getHeaders();
     return this.http.get(this.baseUrl + '/auth/profile', {headers: headers})
       .map(res => res.json()).toPromise();
   }
 
-  storeUserData(token: string, user: UserInfo, rememberMe: boolean){
+  storeUserData(token: string, user: UserInfo, rememberMe: boolean) {
     if (rememberMe) {
       localStorage.setItem('id_token', token);
       localStorage.setItem('user', JSON.stringify(user));
@@ -55,28 +55,34 @@ export class AuthService {
 
   getUserInfo(): UserInfo {
     let tryCount = 1;
-    let result: UserInfo;
-
-    while(!result && tryCount <= 5){
-      tryCount++;
-      result = JSON.parse(localStorage.getItem('user') ||
-        sessionStorage.getItem('user'));
+    let timeoutId: any;
+    let result: UserInfo = null;
+    //try now
+    result = JSON.parse(localStorage.getItem('user') ||
+      sessionStorage.getItem('user'));
+    //didn't get it, try a bit
+    while (!result && tryCount <= 5) {
+       timeoutId = window.setTimeout(() => {
+        result = JSON.parse(localStorage.getItem('user') ||
+          sessionStorage.getItem('user'));
+      }, 100)
     }
-
-    return result;
+    window.clearTimeout(timeoutId);
+    console.log(tryCount + " : " + JSON.stringify(result))
+    return result as UserInfo;
   }
 
-  loadToken(){
+  loadToken() {
     this.authToken = localStorage.getItem('id_token') ||
       sessionStorage.getItem('id_token');
   }
 
-  loggedIn(){
+  loggedIn() {
     this.loadToken();
     return tokenNotExpired(null, this.authToken);
   }
 
-  logout(){
+  logout() {
     this.authToken = null;
     sessionStorage.clear();
     localStorage.clear();
