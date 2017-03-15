@@ -9,15 +9,27 @@ import {Router} from '@angular/router';
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent implements OnInit {
-  public userInfo: UserInfo;
-
+  userInfo: UserInfo = {};
   constructor(private messageService: MessageService,
               private authService: AuthService,
               private router: Router) {
   }
 
   ngOnInit() {
-    this.userInfo = this.authService.getUserInfo() || {};
+  }
+
+  getUserInfo() : UserInfo {
+    if (this.authService.loggedIn()){
+      if(this.userInfo.firstName)
+        return this.userInfo;
+
+      while(!this.userInfo.firstName){
+        this.userInfo = this.authService.getUserInfo();
+      }
+
+      return this.userInfo;
+    }
+    return this.userInfo;
   }
 
   onLogoutClick() {
