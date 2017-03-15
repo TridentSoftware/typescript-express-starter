@@ -25,6 +25,8 @@ export class LoginComponent implements OnInit {
   }
 
   onLoginSubmit() {
+    //fix for phones leaving trailing space
+    this.login.username = this.login.username.trim();
     this.authService.authenticateUser(this.login).then(data => {
       this.authService.storeUserData(data.token, data.user, this.login.rememberMe);
       this.messageService.success('You are now logged in.');
