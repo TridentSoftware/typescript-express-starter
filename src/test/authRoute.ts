@@ -61,12 +61,15 @@ class AuthRouteTest {
       password: "password1"
     } as IUser;
 
-    const realmDelimiter = (AuthRouteTest.realm && AuthRouteTest.realm.length > 0) ? ":" : "";
+    //a little realm work
+    const existingUsernameForDb = (AuthRouteTest.realm && AuthRouteTest.realm.length > 0) ?
+      [AuthRouteTest.realm, AuthRouteTest.testusers[1]].join(":") :
+      AuthRouteTest.testusers[1];
     this.existingUserInDb = {
       realm: AuthRouteTest.realm,
       firstName: "Bruce",
       lastName: "Wayne",
-      username: [AuthRouteTest.realm, AuthRouteTest.testusers[1]].join(realmDelimiter),
+      username: existingUsernameForDb,
       email: "bruce1@wayneenterprises.com",
       password: "password1"
     } as IUser;
