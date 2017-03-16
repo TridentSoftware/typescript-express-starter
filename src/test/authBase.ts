@@ -31,7 +31,6 @@ export class AuthTestBase {
 
   public static after(done: Function) {
     User.remove({
-      //username: {$in: AuthTestBase.testusersWithRealms}
       realm: AuthTestBase.realm
     }).then(() => {
       mongoose.disconnect().then(done());
@@ -73,7 +72,6 @@ export class AuthTestBase {
     } as IUser;
 
     User.remove({
-      //username: {$in: AuthTestBase.testusersWithRealms}
       realm: AuthTestBase.realm
     }).then(() => {
       //existing user
