@@ -2,12 +2,13 @@ import {NextFunction, Request, Response, Router} from "express";
 import {BaseRoute} from "./route";
 import {httpUtil} from "../util/http";
 import {User} from "../models/user";
-import {authUtil, AuthenticatedRequest, Credentials} from "../util/auth";
+import {authUtil} from "../util/auth";
 import {validateUtil} from "../util/validate";
 import * as config from "config";
 import * as passport from "passport";
 import {IUser} from "../interfaces/user";
 import jwt = require("jsonwebtoken");
+import {AuthenticatedRequest,Credentials} from "../interfaces/auth";
 
 export class AuthRoute extends BaseRoute {
 

@@ -1,4 +1,3 @@
-import {Request} from "express";
 import {IUser} from "../interfaces/user";
 const moment = require("moment");
 const attemptsBeforeLockout = 5;
@@ -41,13 +40,3 @@ export const authUtil = {
     }
   }
 };
-
-export interface AuthenticatedRequest extends Request {
-  user: IUser;
-}
-
-export interface Credentials {
-  //realm?: string;
-  username?: string;
-  password?: string;
-}

@@ -3,8 +3,8 @@ import {User} from "../models/user";
 import * as config from "config";
 import mongoose = require("mongoose");
 import {IUser} from "../interfaces/user";
-import {Credentials} from "../util/auth";
 import * as http from "http";
+import {Credentials} from "../interfaces/auth";
 
 /**
  * This test suite must have the development server running!
