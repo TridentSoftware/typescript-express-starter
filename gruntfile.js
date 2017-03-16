@@ -8,7 +8,7 @@ module.exports = function (grunt) {
           {//copy configs
             expand: true,
             cwd: "./",
-            src: ["./\*\*/\*.config", "./\*\*/\*.json", "!./node_modules/**", "!./angular-src/**"],
+            src: ["./\*\*/\*.config", "./\*\*/\*.json", "!./tsconfig.json", "!./node_modules/**", "!./angular-src/**"],
             dest: "./dist"
           },
           {//copy server

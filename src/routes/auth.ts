@@ -31,6 +31,8 @@ export class AuthRoute extends BaseRoute {
       });
   }
 
+  public validRealms: string[] = ["admin", "testing"]
+
   constructor(baseDir: string = null) {
     super(baseDir);
   }
@@ -38,6 +40,7 @@ export class AuthRoute extends BaseRoute {
   public auth(req: Request, res: Response, next: NextFunction) {
     const creds = req.body as Credentials;
 
+    //validation
     if (!creds || !creds.hasOwnProperty("username") || creds.username === "") {
       httpUtil.badRequest(res, "ValidationError", "Username is required.");
       return next();
@@ -46,13 +49,23 @@ export class AuthRoute extends BaseRoute {
       httpUtil.badRequest(res, "ValidationError", "Password is required.");
       return next();
     }
+    if (creds.hasOwnProperty("realm") && creds.realm.length > 0 && this.validRealms.indexOf(creds.realm) == -1) {
+      httpUtil.badRequest(res, "ValidationError", "Invalid realm.");
+      return next();
+    }
 
+    //if we need a realm, add it
+    if (creds.realm)
+      creds.username = [creds.realm, creds.username].join(":");
+
+    //regex for username ignore case
     const usernameRegex: RegExp = new RegExp(["^", creds.username, "$"].join(""), "i");
-    const query = {
-      //realm: creds.realm,
+    let query = {
       username: usernameRegex,
       deleted: false
     };
+
+    //go find them
     User.findOne(query).then(user => {
       if (!user) {
         //httpUtil.notFound(res, "User not found.");
@@ -83,6 +96,11 @@ export class AuthRoute extends BaseRoute {
             expiresIn: 604800 //a week (in seconds)
           });
 
+          //scrub realm
+          if (user.realm && user.realm.length > 0)
+            user.username = user.username.replace(user.realm + ":", "");
+
+          //return user
           const resUser = {
             firstName: user.firstName,
             lastName: user.lastName,
@@ -105,6 +123,14 @@ export class AuthRoute extends BaseRoute {
 
   public register(req: Request, res: Response, next: NextFunction) {
     const newUser = new User(req.body);
+    //validate realm
+    if (newUser.hasOwnProperty("realm") && newUser.realm.length > 0 && this.validRealms.indexOf(newUser.realm) == -1) {
+      httpUtil.badRequest(res, "ValidationError", "Invalid realm.");
+      return next();
+    }
+    //add realm
+    if (newUser.realm && newUser.realm.length > 0)
+      newUser.username = [newUser.realm, newUser.username].join(":");
     newUser.save().then(user => {
       res.json({success: true, message: "User registered."});
     }).catch(err => {
@@ -114,6 +140,9 @@ export class AuthRoute extends BaseRoute {
 
   public profile(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     const user: IUser = req.user;
+    //scrub realm
+    if (user.realm && user.realm.length > 0)
+      user.username = user.username.replace(user.realm + ":", "");
     user.password = null;
     //also send profile
     res.json({user: user});

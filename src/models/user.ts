@@ -23,7 +23,8 @@ const UserSchema = new Schema({
   lastLockout: {type: Date},
   lockedOut: {type: Boolean, default: false},
   disabled: {type: Boolean, default: false},
-  deleted: {type: Boolean, default: false}
+  deleted: {type: Boolean, default: false},
+  roles: [String]
 });
 
 //if you want audit fields

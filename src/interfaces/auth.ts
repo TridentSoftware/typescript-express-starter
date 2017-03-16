@@ -6,7 +6,7 @@ export interface AuthenticatedRequest extends Request {
 }
 
 export interface Credentials {
-  //realm?: string;
-  username?: string;
-  password?: string;
+  realm?: string;
+  username: string;
+  password: string;
 }

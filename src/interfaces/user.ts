@@ -22,7 +22,8 @@ export interface IUser extends IPersistedModel{
   createdOn?: Date;
   updatedOn?: Date;
   createdBy?: string;
-  updatedBy: string;
+  updatedBy?: string;
+  roles?: string[]
 
   comparePassword(clearPassword: string, callback: Function);
 }
