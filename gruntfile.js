@@ -60,7 +60,7 @@ module.exports = function (grunt) {
         tasks: ["copy"]
       },
       config: {
-        files: ["./**/*.json", "./**/*.config"],
+        files: ["./\*\*/\*.config", "./\*\*/\*.json", "!./tsconfig.json", "!./dist/**", "!./node_modules/**", "!./angular-src/**"],
         tasks: ["copy"]
       }
     }

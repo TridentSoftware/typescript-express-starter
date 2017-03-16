@@ -1,11 +1,11 @@
 import {Request} from "express";
 import {IUser} from "./user";
 
-export interface AuthenticatedRequest extends Request {
+export interface IAuthenticatedRequest extends Request {
   user: IUser;
 }
 
-export interface Credentials {
+export interface ICredentials {
   realm?: string;
   username: string;
   password: string;

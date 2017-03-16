@@ -8,7 +8,7 @@ import * as config from "config";
 import * as passport from "passport";
 import {IUser} from "../interfaces/user";
 import jwt = require("jsonwebtoken");
-import {AuthenticatedRequest,Credentials} from "../interfaces/auth";
+import {IAuthenticatedRequest,ICredentials} from "../interfaces/auth";
 
 export class AuthRoute extends BaseRoute {
 
@@ -26,7 +26,7 @@ export class AuthRoute extends BaseRoute {
     //profile
     router.get("/auth/profile",
       passport.authenticate("jwt", {session: false}),
-      (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+      (req: IAuthenticatedRequest, res: Response, next: NextFunction) => {
         new AuthRoute(baseDir).profile(req, res, next);
       });
   }
@@ -38,7 +38,7 @@ export class AuthRoute extends BaseRoute {
   }
 
   public auth(req: Request, res: Response, next: NextFunction) {
-    const creds = req.body as Credentials;
+    const creds = req.body as ICredentials;
 
     //validation
     if (!creds || !creds.hasOwnProperty("username") || creds.username === "") {
@@ -57,7 +57,7 @@ export class AuthRoute extends BaseRoute {
     //if we need a realm, add it
     if (creds.realm)
       creds.username = [creds.realm, creds.username].join(":");
-
+console.log(creds);
     //regex for username ignore case
     const usernameRegex: RegExp = new RegExp(["^", creds.username, "$"].join(""), "i");
     let query = {
@@ -138,7 +138,7 @@ export class AuthRoute extends BaseRoute {
     });
   }
 
-  public profile(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+  public profile(req: IAuthenticatedRequest, res: Response, next: NextFunction) {
     const user: IUser = req.user;
     //scrub realm
     if (user.realm && user.realm.length > 0)

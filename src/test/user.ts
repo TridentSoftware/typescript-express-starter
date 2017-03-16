@@ -1,8 +1,8 @@
 import {suite, test} from "mocha-typescript";
-import {User} from "../models/user";
 import * as config from "config";
 import mongoose = require("mongoose");
 import {IUser} from "../interfaces/user";
+import {User} from "../models/user";
 
 @suite("User model tests")
 class UserTest {
