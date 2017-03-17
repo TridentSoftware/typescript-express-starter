@@ -1,6 +1,6 @@
 import {suite, test} from "mocha-typescript";
 import mongoose = require("mongoose");
-import * as http from "http";
+import axios from "axios";
 import {ICredentials} from "../interfaces/auth";
 import {AuthTestBase} from "./authBase";
 
@@ -17,25 +17,13 @@ class AuthRouteAuthenticatonTest extends AuthTestBase {
       password: this.existingUser.password
     } as ICredentials;
 
-    const postData = JSON.stringify(creds);
-
-    const opts = this.buildRequestOptions(postData);
-    opts.path = "/api/auth";
-    opts.method = "POST";
-
-    const post = http.request(opts, (res) => {
-      res.setEncoding("utf8");
-      res.on("data", (chunk) => {
-        const data: any = JSON.parse(chunk.toString());
-        data.token.should.exist;
-        data.success.should.equal(true);
-        res.statusCode.should.equal(200);
-        done();
-      });
+    axios.post("/auth", creds).then((res) => {
+      const data: any = res.data;
+      data.token.should.exist;
+      data.success.should.equal(true);
+      res.status.should.equal(200);
+      done();
     });
-
-    post.write(postData);
-    post.end();
   }
 
   @test("Should fail login validation (username)")
@@ -46,25 +34,14 @@ class AuthRouteAuthenticatonTest extends AuthTestBase {
       password: this.existingUser.password
     } as ICredentials;
 
-    const postData = JSON.stringify(creds);
-
-    const opts = this.buildRequestOptions(postData);
-    opts.path = "/api/auth";
-    opts.method = "POST";
-
-    const post = http.request(opts, (res) => {
-      res.setEncoding("utf8");
-      res.on("data", (chunk) => {
-        const data: any = JSON.parse(chunk.toString());
-        data.error.should.equal("ValidationError");
-        data.message.should.equal("Username is required.");
-        res.statusCode.should.equal(400);
-        done();
-      });
+    axios.post("/auth", creds).catch((err) => {
+      const res = err.response;
+      const data: any = res.data;
+      data.error.should.equal("ValidationError");
+      data.message.should.equal("Username is required.");
+      res.status.should.equal(400);
+      done();
     });
-
-    post.write(postData);
-    post.end();
   }
 
   @test("Should fail login validation (password)")
@@ -75,25 +52,14 @@ class AuthRouteAuthenticatonTest extends AuthTestBase {
       password: ""
     } as ICredentials;
 
-    const postData = JSON.stringify(creds);
-
-    const opts = this.buildRequestOptions(postData);
-    opts.path = "/api/auth";
-    opts.method = "POST";
-
-    const post = http.request(opts, (res) => {
-      res.setEncoding("utf8");
-      res.on("data", (chunk) => {
-        const data: any = JSON.parse(chunk.toString());
-        data.error.should.equal("ValidationError");
-        data.message.should.equal("Password is required.");
-        res.statusCode.should.equal(400);
-        done();
-      });
+    axios.post("/auth", creds).catch((err) => {
+      const res = err.response;
+      const data: any = res.data;
+      data.error.should.equal("ValidationError");
+      data.message.should.equal("Password is required.");
+      res.status.should.equal(400);
+      done();
     });
-
-    post.write(postData);
-    post.end();
   }
 
   @test("Should fail login validation (realm)")
@@ -104,25 +70,14 @@ class AuthRouteAuthenticatonTest extends AuthTestBase {
       password: this.existingUser.password
     } as ICredentials;
 
-    const postData = JSON.stringify(creds);
-
-    const opts = this.buildRequestOptions(postData);
-    opts.path = "/api/auth";
-    opts.method = "POST";
-
-    const post = http.request(opts, (res) => {
-      res.setEncoding("utf8");
-      res.on("data", (chunk) => {
-        const data: any = JSON.parse(chunk.toString());
-        data.error.should.equal("ValidationError");
-        data.message.should.equal("Invalid realm.");
-        res.statusCode.should.equal(400);
-        done();
-      });
+    axios.post("/auth", creds).catch((err) => {
+      const res = err.response;
+      const data: any = res.data;
+      data.error.should.equal("ValidationError");
+      data.message.should.equal("Invalid realm.");
+      res.status.should.equal(400);
+      done();
     });
-
-    post.write(postData);
-    post.end();
   }
 
   @test("Should fail login authorization (password)")
@@ -133,24 +88,13 @@ class AuthRouteAuthenticatonTest extends AuthTestBase {
       password: "wrong"
     } as ICredentials;
 
-    const postData = JSON.stringify(creds);
-
-    const opts = this.buildRequestOptions(postData);
-    opts.path = "/api/auth";
-    opts.method = "POST";
-
-    const post = http.request(opts, (res) => {
-      res.setEncoding("utf8");
-      res.on("data", (chunk) => {
-        const data: any = JSON.parse(chunk.toString());
-        data.error.should.equal("Unauthorized");
-        res.statusCode.should.equal(401);
-        done();
-      });
+    axios.post("/auth", creds).catch((err) => {
+      const res = err.response;
+      const data: any = res.data;
+      data.error.should.equal("Unauthorized");
+      res.status.should.equal(401);
+      done();
     });
-
-    post.write(postData);
-    post.end();
   }
 
   @test("Should fail login authorization (username)")
@@ -161,24 +105,13 @@ class AuthRouteAuthenticatonTest extends AuthTestBase {
       password: this.existingUser.password
     } as ICredentials;
 
-    const postData = JSON.stringify(creds);
-
-    const opts = this.buildRequestOptions(postData);
-    opts.path = "/api/auth";
-    opts.method = "POST";
-
-    const post = http.request(opts, (res) => {
-      res.setEncoding("utf8");
-      res.on("data", (chunk) => {
-        const data: any = JSON.parse(chunk.toString());
-        data.error.should.equal("Unauthorized");
-        res.statusCode.should.equal(401);
-        done();
-      });
+    axios.post("/auth", creds).catch((err) => {
+      const res = err.response;
+      const data: any = res.data;
+      data.error.should.equal("Unauthorized");
+      res.status.should.equal(401);
+      done();
     });
-
-    post.write(postData);
-    post.end();
   }
 
   @test("Should fail login authorization (disabled)")
@@ -192,24 +125,13 @@ class AuthRouteAuthenticatonTest extends AuthTestBase {
         password: this.existingUser.password
       } as ICredentials;
 
-      const postData = JSON.stringify(creds);
-
-      const opts = this.buildRequestOptions(postData);
-      opts.path = "/api/auth";
-      opts.method = "POST";
-
-      const post = http.request(opts, (res) => {
-        res.setEncoding("utf8");
-        res.on("data", (chunk) => {
-          const data: any = JSON.parse(chunk.toString());
-          data.error.should.equal("Unauthorized");
-          res.statusCode.should.equal(401);
-          done();
-        });
+      axios.post("/auth", creds).catch((err) => {
+        const res = err.response;
+        const data: any = res.data;
+        data.error.should.equal("Unauthorized");
+        res.status.should.equal(401);
+        done();
       });
-
-      post.write(postData);
-      post.end();
     });
   }
 }

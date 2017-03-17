@@ -1,6 +1,6 @@
 import * as config from "config";
 import mongoose = require("mongoose");
-import * as http from "http";
+import axios from "axios";
 import {IUser} from "../interfaces/user";
 import {User} from "../models/user";
 import {ICredentials} from "../interfaces/auth";
@@ -12,6 +12,7 @@ export class AuthTestBase {
   protected existingUserInDb: IUser;
   protected static realm: string = "testing";
   protected static testusers: string[] = ["batman", "batman1"];
+  protected static baseUrl: string = "http://localhost:3000/api";
 
   constructor() {
 
@@ -29,6 +30,8 @@ export class AuthTestBase {
 
     //connect to mongoose and create model
     mongoose.connect(config.get("database.connection")).then(done());
+
+    axios.defaults.baseURL = AuthTestBase.baseUrl;
   }
 
   public static after(done: Function) {
@@ -86,22 +89,5 @@ export class AuthTestBase {
         done()
       });
     });
-  }
-
-  protected buildRequestOptions(postData: string, authToken: string = ""): http.RequestOptions {
-    const result: http.RequestOptions = {
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "applicaiton/json",
-        "Content-Length": Buffer.byteLength(postData)
-      },
-      host: "localhost",
-      port: 3000
-    };
-
-    if (authToken && authToken.length > 0)
-      result.headers["Authorization"] = authToken;
-
-    return result;
   }
 }

@@ -1,6 +1,6 @@
 import {suite, test} from "mocha-typescript";
 import mongoose = require("mongoose");
-import * as http from "http";
+import axios from "axios";
 import {ICredentials} from "../interfaces/auth";
 import {AuthTestBase} from "./authBase";
 
@@ -17,73 +17,37 @@ class AuthRouteProfileTest extends AuthTestBase {
       password: this.existingUser.password
     } as ICredentials;
 
-    const authPostData = JSON.stringify(creds);
-
-    const authOpts = this.buildRequestOptions(authPostData);
-    authOpts.path = "/api/auth";
-    authOpts.method = "POST";
-
-    const authPost = http.request(authOpts, (authRes) => {
-      authRes.setEncoding("utf8");
-      authRes.on("data", (chunk) => {
-        const data: any = JSON.parse(chunk.toString());
-        const profileOpts = this.buildRequestOptions("", data.token);
-        profileOpts.path = "/api/auth/profile";
-        profileOpts.method = "GET";
-
-        const profileGet = http.request(profileOpts, (profileRes) => {
-          profileRes.setEncoding("utf8");
-          profileRes.on("data", (chunk) => {
-            const data: any = JSON.parse(chunk.toString());
-            data.user.should.exist;
-            data.user.username.should.equal(this.existingUser.username);
-            profileRes.statusCode.should.equal(200);
-            done();
-          });
-        });
-
-        profileGet.write("");
-        profileGet.end();
-      });
+    axios.post("/auth", creds).then((res) => {
+      const data: any = res.data;
+      axios.get("/auth/profile", {
+        headers: {"Authorization": data.token}
+      }).then((res) => {
+        const data: any = res.data;
+        data.user.should.exist;
+        data.user.username.should.equal(this.existingUser.username);
+        res.status.should.equal(200);
+        done();
+      })
     });
-
-    authPost.write(authPostData);
-    authPost.end();
   }
 
   @test("Should deny profile without token.")
   public getProfileDenyNoToken(done: Function) {
-    const opts = this.buildRequestOptions("");
-    opts.path = "/api/auth/profile";
-    opts.method = "GET";
-
-    const get = http.request(opts, (res) => {
-      res.setEncoding("utf8");
-      res.on("data", (chunk) => {
-        res.statusCode.should.equal(401);
-        done();
-      });
+    axios.get("/auth/profile").catch((err) => {
+      const res = err.response;
+      res.status.should.equal(401);
+      done();
     });
-
-    get.write("");
-    get.end();
   }
 
   @test("Should deny profile with bad token.")
   public getProfileDenyBadToken(done: Function) {
-    const opts = this.buildRequestOptions("", "JWT kdsjfaosdjajflkjasdlkfja");
-    opts.path = "/api/auth/profile";
-    opts.method = "GET";
-
-    const get = http.request(opts, (res) => {
-      res.setEncoding("utf8");
-      res.on("data", (chunk) => {
-        res.statusCode.should.equal(401);
-        done();
-      });
+    axios.get("/auth/profile", {
+      headers: {"Authorization": "JWT kdsjfaosdjajflkjasdlkfja"}
+    }).catch((err) => {
+      const res = err.response;
+      res.status.should.equal(401);
+      done();
     });
-
-    get.write("");
-    get.end();
   }
 }

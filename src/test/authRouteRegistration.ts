@@ -1,7 +1,6 @@
 import {suite, test} from "mocha-typescript";
 import mongoose = require("mongoose");
-import * as http from "http";
-import {ICredentials} from "../interfaces/auth";
+import axios from "axios";
 import {AuthTestBase} from "./authBase";
 
 /**
@@ -11,24 +10,12 @@ import {AuthTestBase} from "./authBase";
 class AuthRouteRegistrationTest extends AuthTestBase {
   @test("Should register successfully")
   public register(done: Function) {
-    const postData = JSON.stringify(this.registerData);
-
-    const opts = this.buildRequestOptions(postData);
-    opts.path = "/api/auth/register";
-    opts.method = "POST";
-
-    const post = http.request(opts, (res) => {
-      res.setEncoding("utf8");
-      res.on("data", (chunk) => {
-        const data: any = JSON.parse(chunk.toString());
-        data.success.should.equal(true);
-        res.statusCode.should.equal(200);
-        done();
-      });
+    axios.post("/auth/register", this.registerData).then((res) =>{
+      const data: any = res.data;
+      data.success.should.equal(true);
+      res.status.should.equal(200);
+      done();
     });
-
-    post.write(postData);
-    post.end();
   }
 
   @test("Should fail registration validation")
@@ -36,49 +23,28 @@ class AuthRouteRegistrationTest extends AuthTestBase {
     delete this.registerData.firstName;
     delete this.registerData.lastName;
 
-    const postData = JSON.stringify(this.registerData);
-
-    const opts = this.buildRequestOptions(postData);
-    opts.path = "/api/auth/register";
-    opts.method = "POST";
-
-    const post = http.request(opts, (res) => {
-      res.setEncoding("utf8");
-      res.on("data", (chunk) => {
-        const data: any = JSON.parse(chunk.toString());
-        data.error.should.equal("ValidationError");
-        data.errors.should.be.lengthOf(2);
-        data.errors.should.have.deep.property("[0].field", "lastName");
-        data.errors.should.have.deep.property("[1].field", "firstName");
-        res.statusCode.should.equal(400);
-        done();
-      });
+    axios.post("/auth/register", this.registerData).catch((err) =>{
+      const res = err.response;
+      const data: any = res.data;
+      data.error.should.equal("ValidationError");
+      data.errors.should.be.lengthOf(2);
+      data.errors.should.have.deep.property("[0].field", "lastName");
+      data.errors.should.have.deep.property("[1].field", "firstName");
+      res.status.should.equal(400);
+      done();
     });
-
-    post.write(postData);
-    post.end();
   }
 
   @test("Should fail registration duplicate")
   public registerFailDuplicate(done: Function) {
     this.registerData.username = this.existingUser.username;
-    const postData = JSON.stringify(this.registerData);
 
-    const opts = this.buildRequestOptions(postData);
-    opts.path = "/api/auth/register";
-    opts.method = "POST";
-
-    const post = http.request(opts, (res) => {
-      res.setEncoding("utf8");
-      res.on("data", (chunk) => {
-        const data: any = JSON.parse(chunk.toString());
-        data.error.should.equal("Conflict");
-        res.statusCode.should.equal(409);
-        done();
-      });
+    axios.post("/auth/register", this.registerData).catch((err) =>{
+      const res = err.response;
+      const data: any = res.data;
+      data.error.should.equal("Conflict");
+      res.status.should.equal(409);
+      done();
     });
-
-    post.write(postData);
-    post.end();
   }
 }

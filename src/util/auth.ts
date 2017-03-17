@@ -10,7 +10,6 @@ export const authUtil = {
   realmIsValid: (realm: string): boolean => {
     if (!realm || !(realm.length > 0)) return true; //no realm is valid
     const validRealms: string[] = config.get("app.realms");
-    console.log(validRealms);
     return !(validRealms.indexOf(realm) == -1)
   },
   setCredentialRealm: (creds: ICredentials) => {
