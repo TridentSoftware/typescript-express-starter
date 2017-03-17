@@ -27,11 +27,14 @@ export class AuthRoute extends BaseRoute {
     router.get("/auth/profile",
       passport.authenticate("jwt", {session: false}), //authentication
       (req: IAuthenticatedRequest, res: Response, next: NextFunction) => {
+        new AuthRoute(baseDir).getProfile(req, res, next);
+      });
+    router.put("/auth/profile",
+      passport.authenticate("jwt", {session: false}), //authentication
+      (req: IAuthenticatedRequest, res: Response, next: NextFunction) => {
         new AuthRoute(baseDir).profile(req, res, next);
       });
   }
-
-  public validRealms: string[] = ["admin", "testing"]
 
   constructor(baseDir: string = null) {
     super(baseDir);
@@ -135,12 +138,23 @@ export class AuthRoute extends BaseRoute {
     });
   }
 
-  public profile(req: IAuthenticatedRequest, res: Response, next: NextFunction) {
+  public getProfile(req: IAuthenticatedRequest, res: Response, next: NextFunction) {
     let user: IUser = req.user;
     //scrub realm
     user = authUtil.scrubUserRealm(user);
     user.password = null;
     //also send profile
     res.json({user: user});
+  }
+
+  public profile(req: IAuthenticatedRequest, res: Response, next: NextFunction) {
+    let updateUser: IUser = new User(req.body);
+    //set realm
+    updateUser = authUtil.setUserRealm(updateUser);
+    updateUser.save().then(user => {
+      res.json({success: true, message: "User updated."});
+    }).catch(err => {
+      validateUtil.validationError(err, res);
+    });
   }
 }
