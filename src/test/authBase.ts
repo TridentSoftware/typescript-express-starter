@@ -3,6 +3,8 @@ import mongoose = require("mongoose");
 import * as http from "http";
 import {IUser} from "../interfaces/user";
 import {User} from "../models/user";
+import {ICredentials} from "../interfaces/auth";
+import {authUtil} from "../util/auth";
 
 export class AuthTestBase {
   protected registerData: IUser;
@@ -58,17 +60,20 @@ export class AuthTestBase {
       password: "password1"
     } as IUser;
 
-    //a little realm work
-    const existingUsernameForDb = (AuthTestBase.realm && AuthTestBase.realm.length > 0) ?
-      [AuthTestBase.realm, AuthTestBase.testusers[1]].join(":") :
-      AuthTestBase.testusers[1];
-    this.existingUserInDb = {
+    //exesting user realm
+    let creds: ICredentials = {
       realm: AuthTestBase.realm,
+      username: AuthTestBase.testusers[1],
+      password: "password1"
+    };
+    creds = authUtil.setCredentialRealm(creds);
+    this.existingUserInDb = {
+      realm: creds.realm,
       firstName: "Bruce",
       lastName: "Wayne",
-      username: existingUsernameForDb,
+      username: creds.username,
       email: "bruce1@wayneenterprises.com",
-      password: "password1"
+      password: creds.password
     } as IUser;
 
     User.remove({

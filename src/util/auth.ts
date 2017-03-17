@@ -14,7 +14,7 @@ export const authUtil = {
     return !(validRealms.indexOf(realm) == -1)
   },
   setCredentialRealm: (creds: ICredentials) => {
-    if (creds.realm)
+    if (creds.realm && creds.realm.length > 0)
       creds.username = [creds.realm, creds.username].join(":");
     return creds;
   },
