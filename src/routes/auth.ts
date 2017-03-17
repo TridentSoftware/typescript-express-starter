@@ -25,7 +25,7 @@ export class AuthRoute extends BaseRoute {
     });
     //profile
     router.get("/auth/profile",
-      passport.authenticate("jwt", {session: false}),
+      passport.authenticate("jwt", {session: false}), //authentication
       (req: IAuthenticatedRequest, res: Response, next: NextFunction) => {
         new AuthRoute(baseDir).profile(req, res, next);
       });
@@ -38,7 +38,7 @@ export class AuthRoute extends BaseRoute {
   }
 
   public auth(req: Request, res: Response, next: NextFunction) {
-    const creds = req.body as ICredentials;
+    let creds = req.body as ICredentials;
 
     //validation
     if (!creds || !creds.hasOwnProperty("username") || creds.username === "") {
@@ -49,15 +49,14 @@ export class AuthRoute extends BaseRoute {
       httpUtil.badRequest(res, "ValidationError", "Password is required.");
       return next();
     }
-    if (creds.hasOwnProperty("realm") && creds.realm.length > 0 && this.validRealms.indexOf(creds.realm) == -1) {
+    if (!authUtil.realmIsValid(creds.realm)) {
       httpUtil.badRequest(res, "ValidationError", "Invalid realm.");
       return next();
     }
 
-    //if we need a realm, add it
-    if (creds.realm)
-      creds.username = [creds.realm, creds.username].join(":");
-console.log(creds);
+    //do realm
+    creds = authUtil.setCredentialRealm(creds);
+
     //regex for username ignore case
     const usernameRegex: RegExp = new RegExp(["^", creds.username, "$"].join(""), "i");
     let query = {
@@ -97,8 +96,7 @@ console.log(creds);
           });
 
           //scrub realm
-          if (user.realm && user.realm.length > 0)
-            user.username = user.username.replace(user.realm + ":", "");
+          user = authUtil.scrubUserRealm(user);
 
           //return user
           const resUser = {
@@ -122,15 +120,14 @@ console.log(creds);
   }
 
   public register(req: Request, res: Response, next: NextFunction) {
-    const newUser = new User(req.body);
+    let newUser = new User(req.body);
     //validate realm
-    if (newUser.hasOwnProperty("realm") && newUser.realm.length > 0 && this.validRealms.indexOf(newUser.realm) == -1) {
+    if (!authUtil.realmIsValid(newUser.realm)) {
       httpUtil.badRequest(res, "ValidationError", "Invalid realm.");
       return next();
     }
     //add realm
-    if (newUser.realm && newUser.realm.length > 0)
-      newUser.username = [newUser.realm, newUser.username].join(":");
+    newUser = authUtil.setUserRealm(newUser);
     newUser.save().then(user => {
       res.json({success: true, message: "User registered."});
     }).catch(err => {
@@ -139,10 +136,9 @@ console.log(creds);
   }
 
   public profile(req: IAuthenticatedRequest, res: Response, next: NextFunction) {
-    const user: IUser = req.user;
+    let user: IUser = req.user;
     //scrub realm
-    if (user.realm && user.realm.length > 0)
-      user.username = user.username.replace(user.realm + ":", "");
+    user = authUtil.scrubUserRealm(user);
     user.password = null;
     //also send profile
     res.json({user: user});

@@ -1,10 +1,33 @@
 import {IUser} from "../interfaces/user";
+import {ICredentials} from "../interfaces/auth";
+import * as config from "config";
 const moment = require("moment");
 const attemptsBeforeLockout = 5;
 const loginSpanInMinutes = 15;
 const lockoutInMinutes = 5;
 
 export const authUtil = {
+  realmIsValid: (realm: string): boolean => {
+    if (!realm || !(realm.length > 0)) return true; //no realm is valid
+    const validRealms: string[] = config.get("app.realms");
+    console.log(validRealms);
+    return !(validRealms.indexOf(realm) == -1)
+  },
+  setCredentialRealm: (creds: ICredentials) => {
+    if (creds.realm)
+      creds.username = [creds.realm, creds.username].join(":");
+    return creds;
+  },
+  setUserRealm: (user: IUser) => {
+    if (user.realm && user.realm.length > 0)
+      user.username = [user.realm, user.username].join(":");
+    return user;
+  },
+  scrubUserRealm: (user: IUser) => {
+    if (user.realm && user.realm.length > 0)
+      user.username = user.username.replace(user.realm + ":", "");
+    return user;
+  },
   loginAttempt: (user: IUser) => {
     user.loginAttempts++;
     //see if this is out of span of counting, if so re-set count
