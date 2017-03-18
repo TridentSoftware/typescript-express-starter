@@ -4,3 +4,4 @@ dist/
 node_modules/
 *.log
 public/
+config/production.json

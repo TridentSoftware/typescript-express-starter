@@ -61,22 +61,35 @@ class AuthRouteProfileTest extends AuthTestBase {
 
     let token: string;
     axios.post("/auth", creds).then((res) => {
+      //login
       const data: any = res.data;
       token = data.token;
       this.existingUser.email = "updatedemail@wayneenterprises.com";
       axios.put("/auth/profile", this.existingUser, {
         headers: {"Authorization": token}
       }).then((res) => {
+        //update profile
         const data: any = res.data;
         data.success.should.equal(true);
         res.status.should.equal(200);
+      }).then(() => {
+        axios.get("/auth/profile", {
+          headers: {"Authorization": token}
+        }).then((res) => {
+          //check profile changed
+          const data: any = res.data;
+          data.user.should.exist;
+          data.user.email.should.equal(this.existingUser.email);
+          res.status.should.equal(200);
+          done();
+        });
         done();
       });
     });
   }
 
-  @test("Should not update invalid profile when logged in.")
-  public updateProfileValidation(done: Function) {
+  @test("Should fail update profile validation.")
+  public updateProfileValidationFirstName(done: Function) {
     const creds = {
       realm: AuthTestBase.realm,
       username: this.existingUser.username,
@@ -95,6 +108,31 @@ class AuthRouteProfileTest extends AuthTestBase {
         const data: any = res.data;
         data.error.should.equal("ValidationError");
         res.status.should.equal(400);
+        done();
+      });
+    });
+  }
+
+  @test("Should fail update profile duplicate.")
+  public updateProfileValidationDuplicate(done: Function) {
+    const creds = {
+      realm: AuthTestBase.realm,
+      username: this.existingUser.username,
+      password: this.existingUser.password
+    } as ICredentials;
+
+    let token: string;
+    axios.post("/auth", creds).then((res) => {
+      const data: any = res.data;
+      token = data.token;
+      this.existingUser.email = this.existingUser2.email;
+      axios.put("/auth/profile", this.existingUser, {
+        headers: {"Authorization": token}
+      }).catch((err) => {
+        const res = err.response;
+        const data: any = res.data;
+        data.error.should.equal("Conflict");
+        res.status.should.equal(409);
         done();
       });
     });

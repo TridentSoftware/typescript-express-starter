@@ -10,8 +10,9 @@ export class AuthTestBase {
   protected registerData: IUser;
   protected existingUser: IUser;
   protected existingUserInDb: IUser;
+  protected existingUser2: IUser;
   protected static realm: string = "testing";
-  protected static testusers: string[] = ["batman", "batman1"];
+  protected static testusers: string[] = ["batman", "batman1", "batman2"];
   protected static baseUrl: string = "http://localhost:3000/api";
 
   constructor() {
@@ -63,7 +64,17 @@ export class AuthTestBase {
       password: "password1"
     } as IUser;
 
-    //exesting user realm
+    //new user data
+    this.existingUser2 = {
+      realm: AuthTestBase.realm,
+      firstName: "Bruce",
+      lastName: "Wayne",
+      username: AuthTestBase.testusers[2],
+      email: "bruce2@wayneenterprises.com",
+      password: "password1"
+    } as IUser;
+
+    //existing user realm
     let creds: ICredentials = {
       realm: AuthTestBase.realm,
       username: AuthTestBase.testusers[1],
@@ -79,14 +90,30 @@ export class AuthTestBase {
       password: creds.password
     } as IUser;
 
+    let creds2: ICredentials = {
+      realm: AuthTestBase.realm,
+      username: AuthTestBase.testusers[2],
+      password: "password1"
+    };
+    creds2 = authUtil.setCredentialRealm(creds2);
+    const existingUserInDb2 = {
+      realm: creds2.realm,
+      firstName: "Bruce",
+      lastName: "Wayne",
+      username: creds2.username,
+      email: "bruce2@wayneenterprises.com",
+      password: creds2.password
+    } as IUser;
+
     User.remove({
       realm: AuthTestBase.realm
     }).then(() => {
       //existing user
       const eu = new User(this.existingUserInDb);
+      const eu2 = new User(existingUserInDb2);
       eu.save().then(user => {
         this.existingUserInDb = user;
-        done()
+        eu2.save().then(done());
       });
     });
   }
